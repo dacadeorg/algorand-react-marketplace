@@ -10,8 +10,9 @@ const Wallet = ({address, amount, symbol, destroy}) => {
             <Dropdown>
                 <Dropdown.Toggle variant="light" align="end" id="dropdown-basic"
                                  className="d-flex align-items-center border rounded-pill py-1">
+
                     {amount ? (
-                        <>{formatBigNumber(amount)} <span className="ms-1"> {symbol}</span></>
+                        <>{amount} <span className="ms-1"> {symbol}</span></>
                     ) : (<Spinner animation="border" size="sm" className="opacity-25"/>)}
                     <Identicon address={address} size={28} className="ms-2 me-1"/>
                 </Dropdown.Toggle>

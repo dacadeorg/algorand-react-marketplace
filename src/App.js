@@ -6,6 +6,8 @@ import './App.css';
 import Wallet from "./components/wallet";
 import WalletConnect from "@walletconnect/client";
 import { apiGetAccountAssets } from "./utils/dapp";
+import {Notification} from "./components/ui/Notifications";
+import {Container, Nav} from "react-bootstrap";
 const App = function AppWrapper() {
 
     const [connector, setConnector] = useState(null);
@@ -17,20 +19,6 @@ const App = function AppWrapper() {
 
     const [fetching, setFetching] = useState(false);
     const [connected, setConnected] = useState(false);
-
-    // useEffect(() => {
-    //     // Check if connection is already established
-    //     if (connector) {
-    //         subscribeToEvents(connector);
-    //       setConnected(true)
-    //         if (!connector.connected) {
-    //             connector.createSession();
-    //         }
-    //         const { accounts } = connector;
-    //         onSessionUpdate(accounts)
-    //     }
-    // }, [connector]);
-    //
 
     const walletConnectInit = async () =>   {
         // bridge url
@@ -174,25 +162,36 @@ const App = function AppWrapper() {
             setFetching(false)
         }
     };
-    //
-    // public toggleModal = () =>
-    //     this.setState({
-    //         showModal: !this.state.showModal,
-    //         pendingSubmissions: [],
-    //     });
 
 
     return (
-        <div className="App">
-            <header className="App-header">
-                {connected ?
-                    <Wallet address={address} amount={0} destroy={killSession} symbol={"ALGO"}/>
-                    :
-                    <Cover name={"Algorand React Marketplace"} coverImg={"https://blog.bitnovo.com/wp-content/uploads/2021/07/Que-es-Algorand-ALGO.jpg"} connect={walletConnectInit}/>
-                }
+        <>
 
-            </header>
-        </div>
+            <Notification/>
+
+            {address ? (
+            <Container fluid="md">
+                <Nav className="justify-content-end pt-3 pb-5">
+                    <Nav.Item>
+
+                        {/*display user wallet*/}
+                        <Wallet
+                            address={address} amount={1} destroy={killSession} symbol={"ALGO"}
+                        />
+                    </Nav.Item>
+                </Nav>
+                <main>
+
+                    {/*list NFTs*/}
+                    <Counter />
+                </main>
+            </Container>
+
+            ) : (
+                <Cover name={"Algorand React Marketplace"} coverImg={"https://blog.bitnovo.com/wp-content/uploads/2021/07/Que-es-Algorand-ALGO.jpg"} connect={walletConnectInit}/>
+
+            )}
+        </>
     );
 }
 
