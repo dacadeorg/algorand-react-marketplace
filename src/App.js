@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Cover from "./components/Cover";
 import Counter from "./components/Counter";
 import QRCodeModal from "algorand-walletconnect-qrcode-modal";
@@ -17,14 +17,29 @@ const App = function AppWrapper() {
 
     const [fetching, setFetching] = useState(false);
     const [connected, setConnected] = useState(false);
-    const walletConnectInit = async () => {
+
+    // useEffect(() => {
+    //     // Check if connection is already established
+    //     if (connector) {
+    //         subscribeToEvents(connector);
+    //       setConnected(true)
+    //         if (!connector.connected) {
+    //             connector.createSession();
+    //         }
+    //         const { accounts } = connector;
+    //         onSessionUpdate(accounts)
+    //     }
+    // }, [connector]);
+    //
+
+    const walletConnectInit = async () =>   {
         // bridge url
         const bridge = "https://bridge.walletconnect.org";
 
         // create new connector
         const connector = new WalletConnect({bridge, qrcodeModal: QRCodeModal});
 
-        await setConnector({connector});
+
 
         // check if already connected
         if (!connector.connected) {
@@ -33,60 +48,65 @@ const App = function AppWrapper() {
             await connector.createSession();
         }
 
-        console.log("session created")
+        await setConnector(connector);
 
-        // subscribe to events
-        await subscribeToEvents();
     };
-    const subscribeToEvents = () => {
-        console.log("subscribing to events")
-        if (!connector) {
-            console.log("no connector")
-            return;
+
+
+
+    useEffect(()=>{
+        try {
+            if (!connector) {
+                console.log("no connector")
+                return;
+            }
+
+            console.log("connector available", {connector})
+
+            connector.on("session_update", async (error, payload) => {
+                console.log(`connector.on("session_update")`);
+
+                if (error) {
+                    throw error;
+                }
+
+                const {accounts} = payload.params[0];
+                onSessionUpdate(accounts);
+            });
+
+            connector.on("connect", (error, payload) => {
+                console.log(`connector.on("connect")`);
+
+                if (error) {
+                    throw error;
+                }
+
+                onConnect(payload);
+            });
+
+            connector.on("disconnect", (error, payload) => {
+                console.log(`connector.on("disconnect")`);
+
+                if (error) {
+                    throw error;
+                }
+
+                onDisconnect();
+            });
+
+            if (connector.connected) {
+                const {accounts} = connector;
+                const address = accounts[0];
+                setConnected(true)
+                setAccounts(accounts)
+                setAddress(address)
+                onSessionUpdate(accounts);
+            }
+            setConnector(connector)
+        }catch (e) {
+            console.log({e})
         }
-        console.log({connected, connector})
-
-        connector.on("session_update", async (error, payload) => {
-            console.log(`connector.on("session_update")`);
-
-            if (error) {
-                throw error;
-            }
-
-            const {accounts} = payload.params[0];
-            onSessionUpdate(accounts);
-        });
-
-        connector.on("connect", (error, payload) => {
-            console.log(`connector.on("connect")`);
-
-            if (error) {
-                throw error;
-            }
-
-            onConnect(payload);
-        });
-
-        connector.on("disconnect", (error, payload) => {
-            console.log(`connector.on("disconnect")`);
-
-            if (error) {
-                throw error;
-            }
-
-            onDisconnect();
-        });
-
-        if (connector.connected) {
-            const {accounts} = connector;
-            const address = accounts[0];
-            setConnected(true)
-            setAccounts(accounts)
-            setAddress(address)
-            onSessionUpdate(accounts);
-        }
-        setConnector(connector)
-    };
+    },[connector])
 
     const killSession = async () => {
         if (connector) {
@@ -121,7 +141,8 @@ const App = function AppWrapper() {
         setConnected(true)
         setAccounts(accounts)
         setAddress(address)
-        getAccountAssets();
+        console.log({address})
+        // getAccountAssets();
     };
 
     const onDisconnect = async () => {
@@ -132,7 +153,7 @@ const App = function AppWrapper() {
         const address = accounts[0];
         setAddress(address)
         setAccounts(accounts)
-        await getAccountAssets();
+        // await getAccountAssets();
 
     };
 
@@ -143,11 +164,11 @@ const App = function AppWrapper() {
             // get account balances
             const assets = await apiGetAccountAssets(chain, address);
 
-            setAddress(address)
             setAssets(assets)
 
         } catch (error) {
-            console.error(error);
+            console.error({error});
+            console.warn("Failed to fetch assets. Please connect to the Algorand blockchain")
 
         } finally {
             setFetching(false)
@@ -164,10 +185,10 @@ const App = function AppWrapper() {
     return (
         <div className="App">
             <header className="App-header">
-                {address ?
+                {connected ?
                     <Wallet address={address} amount={0} destroy={killSession} symbol={"ALGO"}/>
                     :
-                    <Cover connect={walletConnectInit}/>
+                    <Cover name={"Algorand React Marketplace"} coverImg={"https://blog.bitnovo.com/wp-content/uploads/2021/07/Que-es-Algorand-ALGO.jpg"} connect={walletConnectInit}/>
                 }
 
             </header>
