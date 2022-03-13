@@ -13,14 +13,14 @@
 <br />
 <div align="center">
 
-<img src="./README/images/logo.png" alt="Logo" width="80" height="80" />
+[//]: # (<img src="./README/images/logo.png" alt="Logo" width="80" height="80" />)
 
 [//]: # (  <a href="https://github.com/othneildrew/Best-README-Template">)
 
 
 [//]: # (  </a>)
 
-<h3 align="center">Celo React Boilerplate</h3>
+<h3 align="center">Algorand React Marketplace</h3>
 
 </div>
 
