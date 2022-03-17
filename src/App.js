@@ -5,16 +5,29 @@ import QRCodeModal from "algorand-walletconnect-qrcode-modal";
 import './App.css';
 import Wallet from "./components/wallet";
 import WalletConnect from "@walletconnect/client";
-import { apiGetAccountAssets } from "./utils/dapp";
+import {apiGetAccountAssets, fetchAssets} from "./utils/dapp";
 import {Notification} from "./components/ui/Notifications";
 import {Container, Nav} from "react-bootstrap";
+
+import MyAlgo from "@randlabs/myalgo-connect";
+import algosdk from "algosdk";
+
+
+const algodClient = new algosdk.Algodv2('', 'https://api.testnet.algoexplorer.io', '');
+const myAlgoWallet = new MyAlgo();
 const App = function AppWrapper() {
 
+
     const [connector, setConnector] = useState(null);
+
+    // selected address
     const [address, setAddress] = useState(null);
+    const [name, setName] = useState(null);
+    const [balance, setBalance] = useState(0);
+    const [accounts, setAccounts] = useState([]);
 
     const [assets, setAssets] = useState([]);
-    const [accounts, setAccounts] = useState([]);
+
     const [chain, setChain] = useState([]);
 
     const [fetching, setFetching] = useState(false);
@@ -164,6 +177,72 @@ const App = function AppWrapper() {
     };
 
 
+    // My Algo wallet
+    const GetAccounts = async () => {
+        try {
+            // @ts-ignore
+            // const r = await AlgoSigner.accounts({
+            //   ledger: "TestNet",
+            // });
+            const myAlgoWallet = new MyAlgo();
+            const r = await myAlgoWallet.connect({ shouldSelectOneAccount: true });
+
+            console.log(r);
+
+            const _address = r[0].address;
+            setAddress(_address);
+
+            // fetch assets for this address
+            // const assets = await fetchAssets(r[0].address);
+            //
+            // setAssets(assets ?? []);
+            return;
+            // return JSON.stringify(r, null, 2);
+        } catch (e) {
+            console.error(e);
+            return;
+            // return JSON.stringify(e, null, 2);
+        }
+    };
+
+
+    const ConnectAlgoSigner = async () => {
+        try {
+
+            const accounts = await myAlgoWallet.connect();
+            console.log(accounts);
+
+            const _wallets = accounts.map(account => account.address);
+            const _names = accounts.map(account => account.name);
+
+            setAccounts(_wallets);
+            setAddress(_wallets[0]);
+            setName(_names[0]);
+
+        } catch (e) {
+            console.error(e);
+            console.log(`Couldn't find MyAlgo wallet!`);
+            console.log("failed to connect ")
+        }
+    };
+
+
+    useEffect(() => {
+        (async () => {
+
+            if(!address) return;
+
+            let accountInfo = await algodClient.accountInformation(address).do();
+            console.log(accountInfo);
+
+            const _balance = accountInfo.amount;
+            setBalance(_balance);
+
+        })();
+    }, [address]);
+
+
+
     return (
         <>
 
@@ -176,7 +255,7 @@ const App = function AppWrapper() {
 
                         {/*display user wallet*/}
                         <Wallet
-                            address={address} amount={1} destroy={killSession} symbol={"ALGO"}
+                            address={address} name={name} amount={1} destroy={killSession} symbol={"ALGO"}
                         />
                     </Nav.Item>
                 </Nav>
@@ -188,7 +267,7 @@ const App = function AppWrapper() {
             </Container>
 
             ) : (
-                <Cover name={"Algorand React Marketplace"} coverImg={"https://blog.bitnovo.com/wp-content/uploads/2021/07/Que-es-Algorand-ALGO.jpg"} connect={walletConnectInit}/>
+                <Cover name={"Algorand React Marketplace"} coverImg={"https://blog.bitnovo.com/wp-content/uploads/2021/07/Que-es-Algorand-ALGO.jpg"} connect={ConnectAlgoSigner}/>
 
             )}
         </>

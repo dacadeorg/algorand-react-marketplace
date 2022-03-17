@@ -12,7 +12,7 @@ const Counter =({address, amount, symbol, destroy}) => {
                 address={address}
                 amount={amount}
                 symbol={symbol}
-                destroy={destroy}
+                destroy={destroy}w
             />
 
         </Card.Header>

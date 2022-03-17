@@ -3,7 +3,7 @@ import {Dropdown, Stack, Spinner} from 'react-bootstrap';
 import {formatBigNumber, truncateAddress} from '../../utils';
 import Identicon from '../ui/Identicon'
 
-const Wallet = ({address, amount, symbol, destroy}) => {
+const Wallet = ({address, name, amount, symbol, destroy}) => {
     if (address) {
         return <>
 
@@ -21,7 +21,7 @@ const Wallet = ({address, amount, symbol, destroy}) => {
         <Dropdown.Item href={`https://algoexplorer.io//address/${address}/transactions`}  target="_blank">
             <Stack direction="horizontal" gap={2}>
                 <i className="bi bi-person-circle fs-4" />
-                <span className="font-monospace">{truncateAddress(address)}</span>
+                <span className="font-monospace">{ name || truncateAddress(address)}</span>
             </Stack>
         </Dropdown.Item>
         <Dropdown.Divider />

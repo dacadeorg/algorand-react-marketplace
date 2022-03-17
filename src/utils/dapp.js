@@ -96,3 +96,34 @@ async function waitForTransaction(chain, txId) {
         lastRound = lastStatus["last-round"];
     }
 }
+
+
+
+// export const fetchAssets = async (account) => {
+//     try {
+//         let assetsData = [];
+//
+//
+//         // @ts-ignore
+//         const accountData = await algod({
+//             ledger: "TestNet",
+//             path: `/v2/accounts/${account}`,
+//         });
+//
+//         console.log(accountData)
+//           await accountData.assets.reduce(
+//             (promise, asset) =>
+//               promise.then(() =>
+//                 AlgoSigner.indexer({
+//                   ledger: "TestNet",
+//                   path: `/v2/assets/${asset["asset-id"]}`,
+//                 }).then((d) => assetsData.push(d))
+//               ),
+//             Promise.resolve()
+//           );
+//
+//         return assetsData;
+//     } catch (e) {
+//
+//     }
+// };
