@@ -15,6 +15,10 @@ int 2
 gtxn 1 TypeEnum
 int pay
 ==
+gtxn 1 Receiver
+global CreatorAddress
+==
+&&
 gtxn 1 Amount
 byte "PRICE"
 app_global_get
@@ -50,15 +54,23 @@ txn Note
 byte "Products_Example_1"
 ==
 assert
-byte "OWNER"
+txna ApplicationArgs 1
+btoi
+int 0
+>
+assert
+byte "NAME"
 txna ApplicationArgs 0
 app_global_put
 byte "PRICE"
 txna ApplicationArgs 1
 btoi
 app_global_put
-byte "NAME"
+byte "IMAGE"
 txna ApplicationArgs 2
+app_global_put
+byte "SOLD"
+int 0
 app_global_put
 int 1
 return
