@@ -4,26 +4,26 @@ import PropTypes from "prop-types";
 import {truncateAddress} from "../../utils";
 import {Button} from "react-bootstrap";
 
-const Address = ({ address }) => {
-  if (address) {
-    return (
-        <Button variant="outline-secondary" className="rounded-pill">
+const Address = ({address}) => {
+    if (address) {
+        return (
+            <Button variant="outline-secondary" className="rounded-pill">
 
-          {/* format user wallet address to a more suitable display */}
-          {truncateAddress(address)}
-        </Button>
-    );
-  }
+                {/* format user wallet address to a more suitable display */}
+                {truncateAddress(address)}
+            </Button>
+        );
+    }
 
-  return null;
+    return null;
 };
 
 Address.propTypes = {
-  address: PropTypes.string,
+    address: PropTypes.string,
 };
 
 Address.defaultProps = {
-  address: "",
+    address: "",
 };
 
 export default Address;

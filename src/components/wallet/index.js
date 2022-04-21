@@ -17,25 +17,27 @@ const Wallet = ({address, name, amount, symbol, destroy}) => {
                     <Identicon address={address} size={28} className="ms-2 me-1"/>
                 </Dropdown.Toggle>
 
-      <Dropdown.Menu className="shadow-lg border-0" >
-        <Dropdown.Item href={`https://algoexplorer.io//address/${address}/transactions`}  target="_blank">
-            <Stack direction="horizontal" gap={2}>
-                <i className="bi bi-person-circle fs-4" />
-                <span className="font-monospace">{ name || truncateAddress(address)}</span>
-            </Stack>
-        </Dropdown.Item>
-        <Dropdown.Divider />
-        <Dropdown.Item as="button" className="d-flex align-items-center"  onClick={() => {destroy();}} >
-            <i className="bi bi-box-arrow-right me-2 fs-4" />
-            Disconnect
-        </Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
+                <Dropdown.Menu className="shadow-lg border-0">
+                    <Dropdown.Item href={`https://algoexplorer.io//address/${address}/transactions`} target="_blank">
+                        <Stack direction="horizontal" gap={2}>
+                            <i className="bi bi-person-circle fs-4"/>
+                            <span className="font-monospace">{name || truncateAddress(address)}</span>
+                        </Stack>
+                    </Dropdown.Item>
+                    <Dropdown.Divider/>
+                    <Dropdown.Item as="button" className="d-flex align-items-center" onClick={() => {
+                        destroy();
+                    }}>
+                        <i className="bi bi-box-arrow-right me-2 fs-4"/>
+                        Disconnect
+                    </Dropdown.Item>
+                </Dropdown.Menu>
+            </Dropdown>
 
-    </>
-  }
+        </>
+    }
 
-  return null;
+    return null;
 };
 
 export default Wallet;

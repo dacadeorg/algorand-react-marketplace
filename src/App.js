@@ -40,13 +40,12 @@ const App = function AppWrapper() {
     const [fetching, setFetching] = useState(false);
     const [connected, setConnected] = useState(false);
 
-    const walletConnectInit = async () =>   {
+    const walletConnectInit = async () => {
         // bridge url
         const bridge = "https://bridge.walletconnect.org";
 
         // create new connector
         const connector = new WalletConnect({bridge, qrcodeModal: QRCodeModal});
-
 
 
         // check if already connected
@@ -61,8 +60,7 @@ const App = function AppWrapper() {
     };
 
 
-
-    useEffect(()=>{
+    useEffect(() => {
         try {
             if (!connector) {
                 console.log("no connector")
@@ -111,10 +109,10 @@ const App = function AppWrapper() {
                 onSessionUpdate(accounts);
             }
             setConnector(connector)
-        }catch (e) {
+        } catch (e) {
             console.log({e})
         }
-    },[connector])
+    }, [connector])
 
     const killSession = async () => {
         if (connector) {
@@ -192,7 +190,7 @@ const App = function AppWrapper() {
             //   ledger: "TestNet",
             // });
             const myAlgoWallet = new MyAlgo();
-            const r = await myAlgoWallet.connect({ shouldSelectOneAccount: true });
+            const r = await myAlgoWallet.connect({shouldSelectOneAccount: true});
 
             console.log(r);
 
@@ -237,7 +235,7 @@ const App = function AppWrapper() {
     useEffect(() => {
         (async () => {
 
-            if(!address) return;
+            if (!address) return;
 
             let accountInfo = await algodClient.accountInformation(address).do();
             console.log(accountInfo);
@@ -249,31 +247,32 @@ const App = function AppWrapper() {
     }, [address]);
 
 
-
     return (
         <>
 
             <Notification/>
 
             {address ? (
-            <Container fluid="md">
-                <Nav className="justify-content-end pt-3 pb-5">
-                    <Nav.Item>
+                <Container fluid="md">
+                    <Nav className="justify-content-end pt-3 pb-5">
+                        <Nav.Item>
 
-                        {/*display user wallet*/}
-                        <Wallet
-                            address={address} name={name} amount={balance} destroy={killSession} symbol={"ALGO"}
-                        />
-                    </Nav.Item>
-                </Nav>
-                <main>
-                    {/*TODO change account*/}
-                    <Products account={account2}/>
-                </main>
-            </Container>
+                            {/*display user wallet*/}
+                            <Wallet
+                                address={address} name={name} amount={balance} destroy={killSession} symbol={"ALGO"}
+                            />
+                        </Nav.Item>
+                    </Nav>
+                    <main>
+                        {/*TODO change account*/}
+                        <Products account={account2}/>
+                    </main>
+                </Container>
 
             ) : (
-                <Cover name={"Algorand React Marketplace"} coverImg={"https://blog.bitnovo.com/wp-content/uploads/2021/07/Que-es-Algorand-ALGO.jpg"} connect={ConnectAlgoSigner}/>
+                <Cover name={"Algorand React Marketplace"}
+                       coverImg={"https://blog.bitnovo.com/wp-content/uploads/2021/07/Que-es-Algorand-ALGO.jpg"}
+                       connect={ConnectAlgoSigner}/>
 
             )}
         </>
