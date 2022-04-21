@@ -62,6 +62,6 @@ if __name__ == "__main__":
     program = Product().program()
     compiled = compileTeal(program, Mode.Application, version=6)
     print(compiled)
-    with open("teal/marketplace_approval.teal", "w") as teal:
+    with open("src/contracts/marketplace_approval.teal", "w") as teal:
         teal.write(compiled)
         teal.close()
