@@ -24,10 +24,13 @@ yarn-error.log*
 
 node_modules
 .env
-.idea*
 coverage
 coverage.json
 typechain
+
+# JetBrains IDE
+.idea/
+*.iml
 
 #Hardhat files
 cache
