@@ -1,5 +1,5 @@
 import algosdk from "algosdk";
-import {account1} from "../constants/accounts";
+import {account1} from "./constants";
 /* eslint import/no-webpack-loader-syntax: off */
 import approvalProgram from "!!raw-loader!../contracts/marketplace_approval.teal";
 import clearStateProgram from "!!raw-loader!../contracts/marketplace_clear_state.teal";
@@ -48,7 +48,7 @@ function intToArray(i) {
 // ADD PRODUCT: create application transaction
 export const createProductAction = async (account, product) => {
     try {
-       console.log("Adding product...")
+        console.log("Adding product...")
 
         let params = await client.getTransactionParams().do()
         params.fee = algosdk.ALGORAND_MIN_TX_FEE;
@@ -60,11 +60,10 @@ export const createProductAction = async (account, product) => {
 
         // Build note and app args
         let note = new TextEncoder().encode("Products_Example_1");
-        let owner = new TextEncoder().encode(account.addr);
-        let price = intToArray(product.price)
-        //let price = new Uint8Array(Buffer.from(product.price.toString()));
         let name = new TextEncoder().encode(product.name);
-        let appArgs = [owner, price, name]
+        let price = intToArray(product.price)
+        let image = new TextEncoder().encode(product.image);
+        let appArgs = [name, price, image]
 
 
         // Create transaction
@@ -208,11 +207,12 @@ const deleteProductAction = async (sender, index) => {
 }
 
 class Product {
-    constructor(appId, owner, price, name, sold) {
+    constructor(appId, name, price, owner, image, sold) {
         this.appId = appId;
-        this.owner = owner;
-        this.price = price;
         this.name = name;
+        this.price = price;
+        this.owner = owner;
+        this.image = image;
         this.sold = sold;
     }
 }
@@ -227,7 +227,9 @@ export const getProductsAction = async () => {
         for (const transaction of transactionInfo.transactions) {
             let appId = transaction["created-application-index"]
             let product = await getApplication(appId)
-            products.push(product)
+            if (product) {
+                products.push(product)
+            }
         }
         return products
     } catch (err) {
@@ -238,34 +240,47 @@ export const getProductsAction = async () => {
 const getApplication = async (appId) => {
     try {
         let response = await indexerClient.lookupApplications(appId).do();
-
         let globalState = response.application.params["global-state"]
 
-        let owner = ""
+        let owner = response.application.params.creator
         let name = ""
+        let image = ""
         let price = 0
         let sold = 0
 
         const getField = (fieldName, globalState) => {
             return globalState.find(state => {
-                return state.key === btoa(fieldName)
+                return state.key === Buffer.from(fieldName, 'utf8').toString('base64');
             })
         }
 
-        if (getField("OWNER", globalState) !== undefined) {
-            owner = atob(getField("OWNER", globalState).value.bytes)
-        }
         if (getField("NAME", globalState) !== undefined) {
-            name = atob(getField("NAME", globalState).value.bytes)
-        }
-        if (getField("PRICE", globalState) !== undefined) {
-            price = getField("PRICE", globalState).value.uint
-        }
-        if (getField("SOLD", globalState) !== undefined) {
-            sold = getField("SOLD", globalState).value.uint
+            let field = getField("NAME", globalState).value.bytes
+            name = Buffer.from(field, 'base64').toString("utf-8")
+        } else {
+            return null;
         }
 
-        return new Product(appId, owner, price, name, sold)
+        if (getField("PRICE", globalState) !== undefined) {
+            price = getField("PRICE", globalState).value.uint
+        } else {
+            return null;
+        }
+
+        if (getField("IMAGE", globalState) !== undefined) {
+            let field = getField("IMAGE", globalState).value.bytes
+            image = Buffer.from(field, 'base64').toString("utf-8")
+        } else {
+            return null;
+        }
+
+        if (getField("SOLD", globalState) !== undefined) {
+            sold = getField("SOLD", globalState).value.uint
+        } else {
+            return null;
+        }
+
+        return new Product(appId, name, price, owner, image, sold)
     } catch (err) {
         console.log(err);
     }

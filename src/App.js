@@ -10,7 +10,7 @@ import {Container, Nav} from "react-bootstrap";
 import MyAlgo from "@randlabs/myalgo-connect";
 import algosdk from "algosdk";
 import Products from "./components/marketplace/Products";
-import {account2} from "./utils/constants";
+import {account1} from "./utils/constants";
 import {Notification} from "./components/utils/Notifications";
 
 // client
@@ -28,7 +28,7 @@ const App = function AppWrapper() {
 
     // selected address
     // TODO change account
-    const [address, setAddress] = useState(account2.addr);
+    const [address, setAddress] = useState(account1.addr);
     const [name, setName] = useState(null);
     const [balance, setBalance] = useState(0);
     const [accounts, setAccounts] = useState([]);
@@ -265,7 +265,7 @@ const App = function AppWrapper() {
                     </Nav>
                     <main>
                         {/*TODO change account*/}
-                        <Products account={account2}/>
+                        <Products account={account1}/>
                     </main>
                 </Container>
 

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import {Badge, Button, Card, Col, Stack} from "react-bootstrap";
 
 const Product = ({product, buyProduct}) => {
-    const {id, price, name, sold, owner} =
+    const {id, name, price, owner, image, sold} =
         product;
 
     return (
@@ -17,6 +17,9 @@ const Product = ({product, buyProduct}) => {
                         </Badge>
                     </Stack>
                 </Card.Header>
+                <div className=" ratio ratio-4x3">
+                    <img src={image} alt={name} style={{ objectFit: "cover" }} />
+                </div>
                 <Card.Body className="d-flex  flex-column text-center">
                     <Card.Title>{name}</Card.Title>
                     <Button

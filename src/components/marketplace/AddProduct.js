@@ -5,7 +5,8 @@ import {Button, FloatingLabel, Form, Modal} from "react-bootstrap";
 const AddProduct = ({ createProduct }) => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
-  const isFormFilled = () => name && price;
+  const [image, setImage] = useState("");
+  const isFormFilled = () => name && price && image;
 
   const [show, setShow] = useState(false);
 
@@ -54,6 +55,19 @@ const AddProduct = ({ createProduct }) => {
                 }}
               />
             </FloatingLabel>
+            <FloatingLabel
+                controlId="inputUrl"
+                label="Image URL"
+                className="mb-3"
+            >
+              <Form.Control
+                  type="text"
+                  placeholder="Image URL"
+                  onChange={(e) => {
+                    setImage(e.target.value);
+                  }}
+              />
+            </FloatingLabel>
           </Modal.Body>
         </Form>
         <Modal.Footer>
@@ -67,6 +81,7 @@ const AddProduct = ({ createProduct }) => {
               createProduct({
                 name,
                 price,
+                image
               });
               handleClose();
             }}
