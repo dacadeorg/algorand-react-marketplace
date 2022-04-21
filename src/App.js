@@ -1,19 +1,25 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Cover from "./components/Cover";
-import Counter from "./components/Counter";
 import QRCodeModal from "algorand-walletconnect-qrcode-modal";
 import './App.css';
 import Wallet from "./components/wallet";
 import WalletConnect from "@walletconnect/client";
-import {apiGetAccountAssets, fetchAssets} from "./utils/dapp";
-import {Notification} from "./components/ui/Notifications";
+import {apiGetAccountAssets} from "./utils/dapp";
 import {Container, Nav} from "react-bootstrap";
 
 import MyAlgo from "@randlabs/myalgo-connect";
 import algosdk from "algosdk";
+import Products from "./components/marketplace/Products";
+import {account2} from "./constants/accounts";
+import {Notification} from "./components/utils/Notifications";
 
+// client
+const algodToken = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+const algodServer = 'http://localhost';
+const algodPort = 4001;
+let algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
+// const algodClient = new algosdk.Algodv2('', 'https://api.testnet.algoexplorer.io', '');
 
-const algodClient = new algosdk.Algodv2('', 'https://api.testnet.algoexplorer.io', '');
 const myAlgoWallet = new MyAlgo();
 const App = function AppWrapper() {
 
@@ -21,7 +27,8 @@ const App = function AppWrapper() {
     const [connector, setConnector] = useState(null);
 
     // selected address
-    const [address, setAddress] = useState(null);
+    // TODO change account
+    const [address, setAddress] = useState(account2.addr);
     const [name, setName] = useState(null);
     const [balance, setBalance] = useState(0);
     const [accounts, setAccounts] = useState([]);
@@ -255,14 +262,13 @@ const App = function AppWrapper() {
 
                         {/*display user wallet*/}
                         <Wallet
-                            address={address} name={name} amount={1} destroy={killSession} symbol={"ALGO"}
+                            address={address} name={name} amount={balance} destroy={killSession} symbol={"ALGO"}
                         />
                     </Nav.Item>
                 </Nav>
                 <main>
-
-                    {/*list NFTs*/}
-                    <Counter />
+                    {/*TODO change account*/}
+                    <Products account={account2}/>
                 </main>
             </Container>
 
