@@ -10,7 +10,7 @@ import {Container, Nav} from "react-bootstrap";
 import MyAlgo from "@randlabs/myalgo-connect";
 import algosdk from "algosdk";
 import Products from "./components/marketplace/Products";
-import {account2} from "./constants/accounts";
+import {account2} from "./utils/constants";
 import {Notification} from "./components/utils/Notifications";
 
 // client

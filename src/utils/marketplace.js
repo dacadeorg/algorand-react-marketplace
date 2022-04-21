@@ -1,6 +1,9 @@
 import algosdk from "algosdk";
-import {approvalProgram, clearStateProgram} from "../constants/contracts";
 import {account1} from "../constants/accounts";
+/* eslint import/no-webpack-loader-syntax: off */
+import approvalProgram from "!!raw-loader!../contracts/marketplace_approval.teal";
+import clearStateProgram from "!!raw-loader!../contracts/marketplace_clear_state.teal";
+
 
 // See https://developer.algorand.org/tutorials/building-and-deploying-voting-smart-contract-with-pyteal-and-react/#5-full-deployment-code-with-javascript-sdk=
 
@@ -45,10 +48,7 @@ function intToArray(i) {
 // ADD PRODUCT: create application transaction
 export const createProductAction = async (account, product) => {
     try {
-        // TODO read from teal
-        //approvalProgram = fs.readFileSync('contracts/marketplace_approval.teal', 'utf8')
-        //clearStateProgram = fs.readFileSync('contracts/marketplace_clear_state.teal', 'utf8')
-        console.log("Adding product...")
+       console.log("Adding product...")
 
         let params = await client.getTransactionParams().do()
         params.fee = algosdk.ALGORAND_MIN_TX_FEE;

@@ -9,7 +9,7 @@
     "@randlabs/myalgo-connect": "^1.1.2",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
+    "@testing-library/user-event": "^12.t1.10",
     "@walletconnect/client": "^1.7.4",
     "algorand-walletconnect-qrcode-modal": "^1.7.4",
     "algosdk": "^1.14.0",
@@ -54,7 +54,7 @@
     "chai": "^4.2.0",
     "ethers": "^5.0.0",
     "hardhat": "^2.8.2",
-    "//": "See https://github.com/facebook/create-react-app/issues/11773",
+    "raw-loader": "^4.0.2",
     "react-error-overlay": "6.0.9"
   }
 }
