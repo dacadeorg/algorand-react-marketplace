@@ -6,7 +6,7 @@ import Loader from "../utils/Loader";
 import {Row} from "react-bootstrap";
 
 import {NotificationError, NotificationSuccess} from "../utils/Notifications";
-import {buyProductAction, createProductAction, getProductsAction,} from "../../utils/marketplace";
+import {buyProductAction, createProductAction, deleteProductAction, getProductsAction,} from "../../utils/marketplace";
 import PropTypes from "prop-types";
 
 const Products = ({account}) => {
@@ -62,6 +62,22 @@ const Products = ({account}) => {
             });
     };
 
+    const deleteProduct = async (product) => {
+        setLoading(true);
+        deleteProductAction(account, product.appId)
+            .then(_ => {
+                getProducts();
+            })
+            .catch(error => {
+                console.log({error})
+                toast(<NotificationError text="Failed to delete product."/>);
+            })
+            .finally(_ => {
+                toast(<NotificationSuccess text="Product deleted successfully"/>);
+                setLoading(false);
+            });
+    };
+
     return (
         <>
             {!loading ? (
@@ -74,8 +90,10 @@ const Products = ({account}) => {
                         {
                             products.map((product, index) => (
                                 <Product
+                                    address={account.addr}
                                     product={product}
                                     buyProduct={buyProduct}
+                                    deleteProduct={deleteProduct}
                                     key={index}
                                 />
                             ))

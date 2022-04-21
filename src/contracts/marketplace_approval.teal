@@ -2,13 +2,17 @@
 txn ApplicationID
 int 0
 ==
-bnz main_l6
+bnz main_l8
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l7
 txna ApplicationArgs 0
 byte "buy"
 ==
-bnz main_l3
+bnz main_l4
 err
-main_l3:
+main_l4:
 global GroupSize
 int 2
 ==
@@ -32,10 +36,10 @@ gtxn 0 Sender
 ==
 &&
 &&
-bnz main_l5
+bnz main_l6
 int 0
 return
-main_l5:
+main_l6:
 byte "SOLD"
 byte "SOLD"
 app_global_get
@@ -45,7 +49,12 @@ btoi
 app_global_put
 int 1
 return
-main_l6:
+main_l7:
+txn Sender
+global CreatorAddress
+==
+return
+main_l8:
 txn NumAppArgs
 int 3
 ==
