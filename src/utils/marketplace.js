@@ -164,7 +164,7 @@ export const buyProductAction = async (account, product, count) => {
 }
 
 // DELETE - Not working yet
-const deleteProductAction = async (sender, index) => {
+export const deleteProductAction = async (account, index) => {
     try {
         console.log("Deleting application...");
 
@@ -173,18 +173,17 @@ const deleteProductAction = async (sender, index) => {
         params.flatFee = true;
 
         // Delete transaction
-        let txn = algosdk.makeApplicationDeleteTxn(sender, params, index);
-        //let txn = algosdk.makeApplicationDeleteTxnFromObject({
-        //    from: sender,
-        //    suggestedParams: params,
-        //    appIndex: index,
-        //});
+        let txn = algosdk.makeApplicationDeleteTxnFromObject({
+            from: account.addr,
+            suggestedParams: params,
+            appIndex: index,
+        });
 
         // Transaction ID
         let txId = txn.txID().toString();
 
         // Sign the transaction
-        let signedTxn = txn.signTxn(account1.sk);
+        let signedTxn = txn.signTxn(account.sk);
         console.log("Signed transaction with txID: %s", txId);
 
         // Submit the transaction
@@ -282,6 +281,7 @@ const getApplication = async (appId) => {
 
         return new Product(appId, name, price, owner, image, sold)
     } catch (err) {
-        console.log(err);
+        // TODO how to handle deleted applications?
+        // console.log(err);
     }
 }
