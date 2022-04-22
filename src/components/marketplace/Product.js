@@ -1,6 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import {Badge, Button, Card, Col, Stack} from "react-bootstrap";
+import {truncateAddress} from "../../utils";
+import Identicon from "../ui/Identicon";
+import {formatAmount} from "../../utils/amount";
 
 const Product = ({address, product, buyProduct, deleteProduct}) => {
     const {id, name, price, owner, image, sold} =
@@ -11,7 +14,8 @@ const Product = ({address, product, buyProduct, deleteProduct}) => {
             <Card className=" h-100">
                 <Card.Header>
                     <Stack direction="horizontal" gap={2}>
-                        <span className="font-monospace text-secondary text-truncate">{owner}</span>
+                        <span className="font-monospace text-secondary">{truncateAddress(owner)}</span>
+                        <Identicon address={address} size={28} className="ms-2 me-1"/>
                         <Badge bg="secondary" className="ms-auto">
                             {sold} Sold
                         </Badge>
@@ -28,7 +32,7 @@ const Product = ({address, product, buyProduct, deleteProduct}) => {
                             onClick={() => buyProduct(product)}
                             className="w-100 py-3"
                         >
-                            Buy for {price} ALGO
+                            Buy for {formatAmount(price)} ALGO
                         </Button>
                         { product.owner === address &&
                             <Button

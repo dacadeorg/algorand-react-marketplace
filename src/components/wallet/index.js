@@ -1,7 +1,8 @@
 import React from 'react';
-import {Dropdown, Stack, Spinner} from 'react-bootstrap';
-import {formatBigNumber, truncateAddress} from '../../utils';
+import {Dropdown, Spinner, Stack} from 'react-bootstrap';
+import {truncateAddress} from '../../utils';
 import Identicon from '../ui/Identicon'
+import {formatAmount} from "../../utils/amount";
 
 const Wallet = ({address, name, amount, symbol, destroy}) => {
     if (address) {
@@ -12,7 +13,7 @@ const Wallet = ({address, name, amount, symbol, destroy}) => {
                                  className="d-flex align-items-center border rounded-pill py-1">
 
                     {amount ? (
-                        <>{amount} <span className="ms-1"> {symbol}</span></>
+                        <>{formatAmount(amount)} <span className="ms-1"> {symbol}</span></>
                     ) : (<Spinner animation="border" size="sm" className="opacity-25"/>)}
                     <Identicon address={address} size={28} className="ms-2 me-1"/>
                 </Dropdown.Toggle>
