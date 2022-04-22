@@ -1,8 +1,6 @@
 from pyteal import *
 
 
-app_deletion = Txn.sender() == Global.creator_address()
-
 class Product:
     class Variables:
         name = Bytes("NAME")
@@ -16,16 +14,14 @@ class Product:
     def application_start(self):
         return Cond(
             [Txn.application_id() == Int(0), self.app_initialization()],
-            [Txn.on_completion() == OnComplete.DeleteApplication, Return(app_deletion)],
+            [Txn.on_completion() == OnComplete.DeleteApplication, self.app_deletion()],
             [Txn.application_args[0] == Bytes(self.AppMethods.buy), self.buy(count=Txn.application_args[1])],
         )
 
     def app_initialization(self):
         return Seq([
             Assert(Txn.application_args.length() == Int(3)),
-            # https://forum.algorand.org/t/nft-marketplace-general-smart-contract-architecture-question/6194
-            # https://developer.algorand.org/docs/get-details/indexer/#note-field-searching=
-            Assert(Txn.note() == Bytes("Products_Example_1")),
+            Assert(Txn.note() == Bytes("marketplace-tutorial:uv1")),
             Assert(Btoi(Txn.application_args[1]) > Int(0)),
             App.globalPut(self.Variables.name, Txn.application_args[0]),
             App.globalPut(self.Variables.price, Btoi(Txn.application_args[1])),
@@ -54,14 +50,8 @@ class Product:
 
         return If(can_buy).Then(update_state).Else(Reject())
 
-    def program(self):
+    def approval_program(self):
         return self.application_start()
 
-
-if __name__ == "__main__":
-    program = Product().program()
-    compiled = compileTeal(program, Mode.Application, version=6)
-    print(compiled)
-    with open("src/contracts/marketplace_approval.teal", "w") as teal:
-        teal.write(compiled)
-        teal.close()
+    def app_deletion(self):
+        return Return(Txn.sender() == Global.creator_address())
