@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {Badge, Button, Card, Col, Stack} from "react-bootstrap";
 import {formatBigNumber, truncateAddress} from "../../utils/conversions";
-import Identicon from "../ui/Identicon";
+import Identicon from "../utils/Identicon";
 
 const Product = ({address, product, buyProduct, deleteProduct}) => {
     const {id, name, price, owner, image, sold} =

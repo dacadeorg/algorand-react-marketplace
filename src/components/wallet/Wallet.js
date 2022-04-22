@@ -1,7 +1,7 @@
 import React from 'react';
 import {Dropdown, Spinner, Stack} from 'react-bootstrap';
 import {formatBigNumber, truncateAddress} from '../../utils/conversions';
-import Identicon from '../ui/Identicon'
+import Identicon from '../utils/Identicon'
 
 const Wallet = ({address, name, amount, symbol, destroy}) => {
     if (address) {

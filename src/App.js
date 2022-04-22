@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import Cover from "./components/Cover";
 import QRCodeModal from "algorand-walletconnect-qrcode-modal";
 import './App.css';
-import Wallet from "./components/wallet";
+import Wallet from "./components/wallet/Wallet";
 import WalletConnect from "@walletconnect/client";
 import {apiGetAccountAssets} from "./utils/dapp";
 import {Container, Nav} from "react-bootstrap";
