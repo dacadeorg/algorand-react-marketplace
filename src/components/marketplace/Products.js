@@ -18,8 +18,7 @@ const Products = ({address}) => {
     }, []);
 
     const getProducts = async () => {
-        console.log("Hallo")
-        setLoading(true);
+        //setLoading(true);
         getProductsAction(address)
             .then(products => {
                 if (products) {
@@ -30,7 +29,7 @@ const Products = ({address}) => {
                 console.log({error});
             })
             .finally(_ => {
-                setLoading(false);
+                //setLoading(false);
             });
     };
 
@@ -38,21 +37,23 @@ const Products = ({address}) => {
         setLoading(true);
         createProductAction(address, data)
             .then(_ => {
+                toast(<NotificationSuccess text="Product added successfully."/>);
                 getProducts();
             })
             .catch(error => {
                 console.log({error});
                 toast(<NotificationError text="Failed to create a product."/>);
-            }).finally(_ => {
-            toast(<NotificationSuccess text="Product added successfully."/>);
-            setLoading(false);
-        });
+            })
+            .finally(_ => {
+                setLoading(false);
+            });
     };
 
     const buyProduct = async (product) => {
         setLoading(true);
         buyProductAction(address, product, 1)
             .then(_ => {
+                toast(<NotificationSuccess text="Product bought successfully"/>);
                 getProducts();
             })
             .catch(error => {
@@ -60,7 +61,6 @@ const Products = ({address}) => {
                 toast(<NotificationError text="Failed to purchase product."/>);
             })
             .finally(_ => {
-                toast(<NotificationSuccess text="Product bought successfully"/>);
                 setLoading(false);
             });
     };

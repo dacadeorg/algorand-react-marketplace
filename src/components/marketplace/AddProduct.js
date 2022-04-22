@@ -6,9 +6,10 @@ import BigNumber from "bignumber.js";
 
 const AddProduct = ({createProduct}) => {
     const [name, setName] = useState("");
-    const [price, setPrice] = useState(new BigNumber(0));
     const [image, setImage] = useState("");
-    const isFormFilled = () => name && price && image;
+    const [description, setDescription] = useState("");
+    const [price, setPrice] = useState(new BigNumber(0));
+    const isFormFilled = () => name && image && description && price;
 
     const [show, setShow] = useState(false);
 
@@ -45,19 +46,6 @@ const AddProduct = ({createProduct}) => {
                             />
                         </FloatingLabel>
                         <FloatingLabel
-                            controlId="inputPrice"
-                            label="Price"
-                            className="mb-3"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder="Price"
-                                onChange={(e) => {
-                                    setPrice(inputToBigNumber(e.target.value));
-                                }}
-                            />
-                        </FloatingLabel>
-                        <FloatingLabel
                             controlId="inputUrl"
                             label="Image URL"
                             className="mb-3"
@@ -67,6 +55,33 @@ const AddProduct = ({createProduct}) => {
                                 placeholder="Image URL"
                                 onChange={(e) => {
                                     setImage(e.target.value);
+                                }}
+                            />
+                        </FloatingLabel>
+                        <FloatingLabel
+                            controlId="inputDescription"
+                            label="Description"
+                            className="mb-3"
+                        >
+                            <Form.Control
+                                as="textarea"
+                                placeholder="description"
+                                style={{ height: "80px" }}
+                                onChange={(e) => {
+                                    setDescription(e.target.value);
+                                }}
+                            />
+                        </FloatingLabel>
+                        <FloatingLabel
+                            controlId="inputPrice"
+                            label="Price"
+                            className="mb-3"
+                        >
+                            <Form.Control
+                                type="text"
+                                placeholder="Price"
+                                onChange={(e) => {
+                                    setPrice(inputToBigNumber(e.target.value));
                                 }}
                             />
                         </FloatingLabel>
@@ -82,8 +97,9 @@ const AddProduct = ({createProduct}) => {
                         onClick={() => {
                             createProduct({
                                 name,
-                                price,
-                                image
+                                image,
+                                description,
+                                price
                             });
                             handleClose();
                         }}
