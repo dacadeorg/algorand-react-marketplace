@@ -1,8 +1,7 @@
 import algosdk from "algosdk";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 
-const ERC20_DECIMALS = 18;
-export {ERC20_DECIMALS};
+export const ALGORAND_DECIMALS = 6;
 
 // local (release) accounts
 // Get mnemonics from existing accounts with ./sandbox goal account export --address [account_address]
