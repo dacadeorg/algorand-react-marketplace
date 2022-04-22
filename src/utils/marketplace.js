@@ -35,6 +35,7 @@ function intToArray(i) {
 export const createProductAction = async (senderAddress, product) => {
     try {
         console.log("Adding product...")
+        console.log(product)
 
         let params = await algodClient.getTransactionParams().do()
         params.fee = algosdk.ALGORAND_MIN_TX_FEE;
@@ -47,9 +48,13 @@ export const createProductAction = async (senderAddress, product) => {
         // Build note and app args
         let note = new TextEncoder().encode(appNote);
         let name = new TextEncoder().encode(product.name);
-        let price = intToArray(product.price)
         let image = new TextEncoder().encode(product.image);
-        let appArgs = [name, price, image]
+        let description = new TextEncoder().encode(product.description);
+        let price = intToArray(product.price.toString())
+
+        let appArgs = [name, image, description, price]
+
+        console.log(appArgs)
 
 
         // Create transaction
@@ -204,13 +209,15 @@ export const deleteProductAction = async (senderAddress, index) => {
 }
 
 class Product {
-    constructor(appId, name, price, owner, image, sold) {
-        this.appId = appId;
+    constructor(name, image, description, price, sold, appId, owner) {
+
         this.name = name;
-        this.price = price;
-        this.owner = owner;
         this.image = image;
+        this.description = description;
+        this.price = price;
         this.sold = sold;
+        this.appId = appId;
+        this.owner = owner;
     }
 }
 
@@ -246,6 +253,7 @@ const getApplication = async (appId) => {
         let owner = response.application.params.creator
         let name = ""
         let image = ""
+        let description = ""
         let price = 0
         let sold = 0
 
@@ -258,30 +266,28 @@ const getApplication = async (appId) => {
         if (getField("NAME", globalState) !== undefined) {
             let field = getField("NAME", globalState).value.bytes
             name = Buffer.from(field, 'base64').toString("utf-8")
-        } else {
-            return null;
-        }
-
-        if (getField("PRICE", globalState) !== undefined) {
-            price = getField("PRICE", globalState).value.uint
-        } else {
-            return null;
         }
 
         if (getField("IMAGE", globalState) !== undefined) {
             let field = getField("IMAGE", globalState).value.bytes
             image = Buffer.from(field, 'base64').toString("utf-8")
-        } else {
-            return null;
+        }
+
+        if (getField("DESCRIPTION", globalState) !== undefined) {
+            let field = getField("DESCRIPTION", globalState).value.bytes
+            description = Buffer.from(field, 'base64').toString("utf-8")
+        }
+
+        if (getField("PRICE", globalState) !== undefined) {
+            price = getField("PRICE", globalState).value.uint
         }
 
         if (getField("SOLD", globalState) !== undefined) {
             sold = getField("SOLD", globalState).value.uint
-        } else {
-            return null;
         }
 
-        return new Product(appId, name, price, owner, image, sold)
+
+        return new Product(name, image, description, price, sold, appId, owner)
     } catch (err) {
         // TODO how to handle deleted applications?
         // console.log(err);
