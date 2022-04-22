@@ -1,10 +1,12 @@
 import React, {useState} from "react";
 import PropTypes from "prop-types";
 import {Button, FloatingLabel, Form, Modal} from "react-bootstrap";
+import {inputToBigNumber} from "../../utils/conversions";
+import BigNumber from "bignumber.js";
 
 const AddProduct = ({ createProduct }) => {
   const [name, setName] = useState("");
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState(new BigNumber(0));
   const [image, setImage] = useState("");
   const isFormFilled = () => name && price && image;
 
@@ -51,7 +53,7 @@ const AddProduct = ({ createProduct }) => {
                 type="text"
                 placeholder="Price"
                 onChange={(e) => {
-                  setPrice(e.target.value);
+                  setPrice(inputToBigNumber(e.target.value));
                 }}
               />
             </FloatingLabel>

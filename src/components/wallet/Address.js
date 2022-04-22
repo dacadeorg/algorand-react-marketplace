@@ -1,7 +1,7 @@
 import React from "react";
 // import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 import PropTypes from "prop-types";
-import {truncateAddress} from "../../utils";
+import {truncateAddress} from "../../utils/conversions";
 import {Button} from "react-bootstrap";
 
 const Address = ({address}) => {
