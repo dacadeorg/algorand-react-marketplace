@@ -1,5 +1,5 @@
 import algosdk from "algosdk";
-import {localAccount, algodClient, indexerClient, myAlgoConnect, ENVIRONMENT} from "./constants";
+import {localAccount, algodClient, indexerClient, myAlgoConnect, ENVIRONMENT, currentRound, appNote} from "./constants";
 /* eslint import/no-webpack-loader-syntax: off */
 import approvalProgram from "!!raw-loader!../contracts/marketplace_approval.teal";
 import clearStateProgram from "!!raw-loader!../contracts/marketplace_clear_state.teal";
@@ -45,7 +45,7 @@ export const createProductAction = async (senderAddress, product) => {
         const compiledClearStateProgram = await compileProgram(clearStateProgram)
 
         // Build note and app args
-        let note = new TextEncoder().encode("Products_Example_1");
+        let note = new TextEncoder().encode(appNote);
         let name = new TextEncoder().encode(product.name);
         let price = intToArray(product.price)
         let image = new TextEncoder().encode(product.image);
@@ -216,11 +216,11 @@ class Product {
 
 export const getProductsAction = async (senderAddress) => {
     try {
-        let note = new TextEncoder().encode("Products_Example_1");
+        let note = new TextEncoder().encode(appNote);
         let s = Buffer.from(note).toString("base64");
         let transactionInfo = await indexerClient.searchForTransactions()
             .notePrefix(s)
-            .minRound(0)
+            .minRound(ENVIRONMENT === "release" ? 0 : currentRound)
             .do();
         let products = []
         for (const transaction of transactionInfo.transactions) {
