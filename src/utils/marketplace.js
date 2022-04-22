@@ -1,11 +1,9 @@
 import algosdk from "algosdk";
-import {account1} from "./constants";
+import {localAccount, algodClient, indexerClient, myAlgoConnect, ENVIRONMENT} from "./constants";
 /* eslint import/no-webpack-loader-syntax: off */
 import approvalProgram from "!!raw-loader!../contracts/marketplace_approval.teal";
 import clearStateProgram from "!!raw-loader!../contracts/marketplace_clear_state.teal";
 
-
-// See https://developer.algorand.org/tutorials/building-and-deploying-voting-smart-contract-with-pyteal-and-react/#5-full-deployment-code-with-javascript-sdk=
 
 // TODO move elsewhere
 //SMART CONTRACT DEPLOYMENT
@@ -15,24 +13,12 @@ const localBytes = 0;
 const globalInts = 24; //# 4 for setup + 20 for choices. Use a larger number for more choices.
 const globalBytes = 3;
 
-// TODO move elsewgere
-// client
-const algodToken = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-const algodServer = 'http://localhost';
-const algodPort = 4001;
-let client = new algosdk.Algodv2(algodToken, algodServer, algodPort);
-
-const indexer_token = "";
-const indexer_server = "http://localhost";
-const indexer_port = 8980;
-
-const indexerClient = new algosdk.Indexer(indexer_token, indexer_server, indexer_port);
 
 // Compile Program
-const compileProgram = async (client, programSource) => {
+const compileProgram = async (programSource) => {
     let encoder = new TextEncoder();
     let programBytes = encoder.encode(programSource);
-    let compileResponse = await client.compile(programBytes).do();
+    let compileResponse = await algodClient.compile(programBytes).do();
     return new Uint8Array(Buffer.from(compileResponse.result, "base64"));
 }
 
@@ -45,18 +31,18 @@ function intToArray(i) {
         (i & 0x000000ff) >> 0);
 }
 
-// ADD PRODUCT: create application transaction
-export const createProductAction = async (account, product) => {
+// CREATE PRODUCT: create application transaction
+export const createProductAction = async (senderAddress, product) => {
     try {
         console.log("Adding product...")
 
-        let params = await client.getTransactionParams().do()
+        let params = await algodClient.getTransactionParams().do()
         params.fee = algosdk.ALGORAND_MIN_TX_FEE;
         params.flatFee = true;
 
         // Compile programs
-        const compiledApprovalProgram = await compileProgram(client, approvalProgram)
-        const compiledClearStateProgram = await compileProgram(client, clearStateProgram)
+        const compiledApprovalProgram = await compileProgram(approvalProgram)
+        const compiledClearStateProgram = await compileProgram(clearStateProgram)
 
         // Build note and app args
         let note = new TextEncoder().encode("Products_Example_1");
@@ -68,7 +54,7 @@ export const createProductAction = async (account, product) => {
 
         // Create transaction
         let txn = algosdk.makeApplicationCreateTxnFromObject({
-            from: account.addr,
+            from: senderAddress,
             suggestedParams: params,
             onComplete: algosdk.OnApplicationComplete.NoOpOC,
             approvalProgram: compiledApprovalProgram,
@@ -84,21 +70,25 @@ export const createProductAction = async (account, product) => {
         // Transaction ID
         let txId = txn.txID().toString();
 
-        // Sign the transaction
-        let signedTxn = txn.signTxn(account.sk);
-        console.log("Signed transaction with txID: %s", txId);
-
-        // Submit the transaction
-        await client.sendRawTransaction(signedTxn).do()
+        // Sign & submit the transaction
+        if (ENVIRONMENT === "release") {
+            let signedTxn = txn.signTxn(localAccount.sk);
+            console.log("Signed transaction with txID: %s", txId);
+            await algodClient.sendRawTransaction(signedTxn).do()
+        } else {
+            let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
+            console.log("Signed transaction with txID: %s", txId);
+            await algodClient.sendRawTransaction(signedTxn.blob).do()
+        }
 
         // Wait for transaction to be confirmed
-        let confirmedTxn = await algosdk.waitForConfirmation(client, txId, 4);
+        let confirmedTxn = await algosdk.waitForConfirmation(algodClient, txId, 4);
 
         // Get the completed Transaction
         console.log("Transaction " + txId + " confirmed in round " + confirmedTxn["confirmed-round"]);
 
         // Display results
-        let transactionResponse = await client.pendingTransactionInformation(txId).do()
+        let transactionResponse = await algodClient.pendingTransactionInformation(txId).do()
         let appId = transactionResponse['application-index'];
         console.log("Created new app-id: ", appId);
         return appId
@@ -108,11 +98,11 @@ export const createProductAction = async (account, product) => {
     }
 }
 
-// BUY PRODUCT
-export const buyProductAction = async (account, product, count) => {
+// BUY PRODUCT: group transaction
+export const buyProductAction = async (senderAddress, product, count) => {
     try {
         console.log("Buying product...");
-        let params = await client.getTransactionParams().do();
+        let params = await algodClient.getTransactionParams().do();
         params.fee = algosdk.ALGORAND_MIN_TX_FEE;
         params.flatFee = true;
 
@@ -123,7 +113,7 @@ export const buyProductAction = async (account, product, count) => {
 
         // Buy transaction
         let buyTxn = algosdk.makeApplicationCallTxnFromObject({
-            from: account.addr,
+            from: senderAddress,
             appIndex: product.appId,
             onComplete: algosdk.OnApplicationComplete.NoOpOC,
             suggestedParams: params,
@@ -133,7 +123,7 @@ export const buyProductAction = async (account, product, count) => {
 
         // Spend transaction
         let spendTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-            from: account.addr,
+            from: senderAddress,
             to: product.owner,
             amount: product.price * count,
             note: new TextEncoder().encode("buy"),
@@ -143,17 +133,23 @@ export const buyProductAction = async (account, product, count) => {
         // Group transaction
         algosdk.assignGroupID([buyTxn, spendTxn])
 
-        // Sign the transactions
-        let signedBuyTxn = buyTxn.signTxn(account.sk);
-        console.log("Signed buy transaction");
-        let signedSpendTxn = spendTxn.signTxn(account.sk);
-        console.log("Signed spend transaction");
-
-        // Submit the transaction
-        let tx = await client.sendRawTransaction([signedBuyTxn, signedSpendTxn]).do()
+        let tx = null;
+        // Sign & submit the transaction
+        if (ENVIRONMENT === "release") {
+            let signedBuyTxn = buyTxn.signTxn(localAccount.sk);
+            let signedSpendTxn = spendTxn.signTxn(localAccount.sk);
+            tx = await algodClient.sendRawTransaction([signedBuyTxn, signedSpendTxn]).do()
+        } else {
+            let signedBuyTxn = await myAlgoConnect.signTransaction(buyTxn.toByte());
+            console.log("Signed buy transaction");
+            console.log("Signed buy transaction");
+            let signedSpendTxn = await myAlgoConnect.signTransaction(spendTxn.toByte());
+            console.log("Signed spend transaction");
+            tx = await algodClient.sendRawTransaction([signedBuyTxn.blob, signedSpendTxn.blob]).do()
+        }
 
         // Wait for transaction to be confirmed
-        let confirmedTxn = await algosdk.waitForConfirmation(client, tx.txId, 4);
+        let confirmedTxn = await algosdk.waitForConfirmation(algodClient, tx.txId, 4);
 
         // Get the completed Transaction
         console.log("Transaction " + tx.txId + " confirmed in round " + confirmedTxn["confirmed-round"]);
@@ -163,41 +159,43 @@ export const buyProductAction = async (account, product, count) => {
     }
 }
 
-// DELETE - Not working yet
-export const deleteProductAction = async (account, index) => {
+// DELETE PRODUCT
+export const deleteProductAction = async (senderAddress, index) => {
     try {
         console.log("Deleting application...");
 
-        let params = await client.getTransactionParams().do();
+        let params = await algodClient.getTransactionParams().do();
         params.fee = algosdk.ALGORAND_MIN_TX_FEE;
         params.flatFee = true;
 
         // Delete transaction
         let txn = algosdk.makeApplicationDeleteTxnFromObject({
-            from: account.addr,
-            suggestedParams: params,
-            appIndex: index,
+            from: senderAddress, suggestedParams: params, appIndex: index,
         });
 
         // Transaction ID
         let txId = txn.txID().toString();
 
-        // Sign the transaction
-        let signedTxn = txn.signTxn(account.sk);
-        console.log("Signed transaction with txID: %s", txId);
-
-        // Submit the transaction
-        await client.sendRawTransaction(signedTxn).do()
+        // Sign & submit the transaction
+        if (ENVIRONMENT === "release") {
+            let signedTxn = txn.signTxn(localAccount.sk);
+            console.log("Signed transaction with txID: %s", txId);
+            await algodClient.sendRawTransaction(signedTxn).do()
+        } else {
+            let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
+            console.log("Signed transaction with txID: %s", txId);
+            await algodClient.sendRawTransaction(signedTxn.blob).do()
+        }
 
         // Wait for transaction to be confirmed
-        const confirmedTxn = await algosdk.waitForConfirmation(client, txId, 4);
+        const confirmedTxn = await algosdk.waitForConfirmation(algodClient, txId, 4);
         console.log("confirmed" + confirmedTxn)
 
         // Get the completed Transaction
         console.log("Transaction " + txId + " confirmed in round " + confirmedTxn["confirmed-round"]);
 
         // Display results
-        let transactionResponse = await client.pendingTransactionInformation(txId).do();
+        let transactionResponse = await algodClient.pendingTransactionInformation(txId).do();
         let appId = transactionResponse['application-index'];
         console.log("Deleted app-id: ", appId);
     } catch (err) {
@@ -216,18 +214,22 @@ class Product {
     }
 }
 
-export const getProductsAction = async () => {
+export const getProductsAction = async (senderAddress) => {
     try {
         let note = new TextEncoder().encode("Products_Example_1");
+        let s = Buffer.from(note).toString("base64");
         let transactionInfo = await indexerClient.searchForTransactions()
-            .notePrefix(note).do();
-
+            .notePrefix(s)
+            .minRound(0)
+            .do();
         let products = []
         for (const transaction of transactionInfo.transactions) {
             let appId = transaction["created-application-index"]
-            let product = await getApplication(appId)
-            if (product) {
-                products.push(product)
+            if (appId) {
+                let product = await getApplication(appId)
+                if (product) {
+                    products.push(product)
+                }
             }
         }
         return products

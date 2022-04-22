@@ -9,7 +9,7 @@ import {NotificationError, NotificationSuccess} from "../utils/Notifications";
 import {buyProductAction, createProductAction, deleteProductAction, getProductsAction,} from "../../utils/marketplace";
 import PropTypes from "prop-types";
 
-const Products = ({account}) => {
+const Products = ({address}) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -18,10 +18,13 @@ const Products = ({account}) => {
     }, []);
 
     const getProducts = async () => {
+        console.log("Hallo")
         setLoading(true);
-        getProductsAction()
+        getProductsAction(address)
             .then(products => {
-                setProducts(products);
+                if (products) {
+                    setProducts(products);
+                }
             })
             .catch(error => {
                 console.log({error});
@@ -33,7 +36,7 @@ const Products = ({account}) => {
 
     const createProduct = async (data) => {
         setLoading(true);
-        createProductAction(account, data)
+        createProductAction(address, data)
             .then(_ => {
                 getProducts();
             })
@@ -48,7 +51,7 @@ const Products = ({account}) => {
 
     const buyProduct = async (product) => {
         setLoading(true);
-        buyProductAction(account, product, 1)
+        buyProductAction(address, product, 1)
             .then(_ => {
                 getProducts();
             })
@@ -64,7 +67,7 @@ const Products = ({account}) => {
 
     const deleteProduct = async (product) => {
         setLoading(true);
-        deleteProductAction(account, product.appId)
+        deleteProductAction(address, product.appId)
             .then(_ => {
                 getProducts();
             })
@@ -90,7 +93,7 @@ const Products = ({account}) => {
                         {
                             products.map((product, index) => (
                                 <Product
-                                    address={account.addr}
+                                    address={address}
                                     product={product}
                                     buyProduct={buyProduct}
                                     deleteProduct={deleteProduct}
@@ -108,7 +111,7 @@ const Products = ({account}) => {
 };
 
 Products.propTypes = {
-    account: PropTypes.instanceOf(Object).isRequired,
+    address: PropTypes.string.isRequired,
 };
 
 export default Products;

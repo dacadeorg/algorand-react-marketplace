@@ -7,28 +7,18 @@ import WalletConnect from "@walletconnect/client";
 import {apiGetAccountAssets} from "./utils/dapp";
 import {Container, Nav} from "react-bootstrap";
 
-import MyAlgo from "@randlabs/myalgo-connect";
-import algosdk from "algosdk";
+import MyAlgoConnect from "@randlabs/myalgo-connect";
 import Products from "./components/marketplace/Products";
-import {account1} from "./utils/constants";
+import {algodClient, ENVIRONMENT, localAccount, myAlgoConnect} from "./utils/constants";
 import {Notification} from "./components/utils/Notifications";
 
-// client
-const algodToken = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-const algodServer = 'http://localhost';
-const algodPort = 4001;
-let algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
-// const algodClient = new algosdk.Algodv2('', 'https://api.testnet.algoexplorer.io', '');
 
-const myAlgoWallet = new MyAlgo();
 const App = function AppWrapper() {
-
 
     const [connector, setConnector] = useState(null);
 
     // selected address
-    // TODO change account
-    const [address, setAddress] = useState(account1.addr);
+    const [address, setAddress] = useState(ENVIRONMENT === "release" ? localAccount.addr: null);
     const [name, setName] = useState(null);
     const [balance, setBalance] = useState(0);
     const [accounts, setAccounts] = useState([]);
@@ -189,7 +179,7 @@ const App = function AppWrapper() {
             // const r = await AlgoSigner.accounts({
             //   ledger: "TestNet",
             // });
-            const myAlgoWallet = new MyAlgo();
+            const myAlgoWallet = new MyAlgoConnect();
             const r = await myAlgoWallet.connect({shouldSelectOneAccount: true});
 
             console.log(r);
@@ -214,7 +204,7 @@ const App = function AppWrapper() {
     const ConnectAlgoSigner = async () => {
         try {
 
-            const accounts = await myAlgoWallet.connect();
+            const accounts = await myAlgoConnect.connect();
             console.log(accounts);
 
             const _wallets = accounts.map(account => account.address);
@@ -264,8 +254,7 @@ const App = function AppWrapper() {
                         </Nav.Item>
                     </Nav>
                     <main>
-                        {/*TODO change account*/}
-                        <Products account={account1}/>
+                        <Products address={address}/>
                     </main>
                 </Container>
 
