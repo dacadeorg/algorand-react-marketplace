@@ -6,7 +6,7 @@ import BigNumber from "bignumber.js";
 
 const AddProduct = ({createProduct}) => {
     const [name, setName] = useState("");
-    const [image, setImage] = useState("");
+    const [image, setImage] = useState("https://i.imgur.com/jjxJWQC.jpg");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState(new BigNumber(0));
     const isFormFilled = () => name && image && description && price;
@@ -53,6 +53,7 @@ const AddProduct = ({createProduct}) => {
                             <Form.Control
                                 type="text"
                                 placeholder="Image URL"
+                                value={image}
                                 onChange={(e) => {
                                     setImage(e.target.value);
                                 }}
@@ -74,7 +75,7 @@ const AddProduct = ({createProduct}) => {
                         </FloatingLabel>
                         <FloatingLabel
                             controlId="inputPrice"
-                            label="Price"
+                            label="Price in ALGO"
                             className="mb-3"
                         >
                             <Form.Control

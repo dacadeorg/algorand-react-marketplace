@@ -47,3 +47,9 @@ export const currentRound = 21134500;
 
 // https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0002.md
 export const appNote = "marketplace-tutorial:uv1"
+
+// declare application state storage (immutable)
+export const localInts = 0;
+export const localBytes = 0;
+export const globalInts = 24; //# 4 for setup + 20 for choices. Use a larger number for more choices.
+export const globalBytes = 3;

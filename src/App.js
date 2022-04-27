@@ -53,7 +53,7 @@ const App = function AppWrapper() {
     useEffect(() => {
         try {
             if (!connector) {
-                console.log("no connector")
+                //console.log("no connector")
                 return;
             }
 
@@ -232,7 +232,7 @@ const App = function AppWrapper() {
         if (!address) return;
 
         let accountInfo = await algodClient.accountInformation(address).do();
-        console.log(accountInfo);
+        //console.log(accountInfo);
 
         const _balance = accountInfo.amount;
         setBalance(_balance);

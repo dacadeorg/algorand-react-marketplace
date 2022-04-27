@@ -1,17 +1,19 @@
 import algosdk from "algosdk";
-import {localAccount, algodClient, indexerClient, myAlgoConnect, ENVIRONMENT, currentRound, appNote} from "./constants";
+import {
+    localAccount,
+    algodClient,
+    indexerClient,
+    myAlgoConnect,
+    ENVIRONMENT,
+    currentRound,
+    appNote,
+    localInts, localBytes, globalInts, globalBytes
+} from "./constants";
 /* eslint import/no-webpack-loader-syntax: off */
 import approvalProgram from "!!raw-loader!../contracts/marketplace_approval.teal";
 import clearStateProgram from "!!raw-loader!../contracts/marketplace_clear_state.teal";
-
-
-// TODO move elsewhere
-//SMART CONTRACT DEPLOYMENT
-// declare application state storage (immutable)
-const localInts = 0;
-const localBytes = 0;
-const globalInts = 24; //# 4 for setup + 20 for choices. Use a larger number for more choices.
-const globalBytes = 3;
+import {intToUint8Array} from "./conversions";
+import {Product} from "./models";
 
 
 // Compile Program
@@ -22,20 +24,10 @@ const compileProgram = async (programSource) => {
     return new Uint8Array(Buffer.from(compileResponse.result, "base64"));
 }
 
-// TODO maybe simplify
-function intToArray(i) {
-    return Uint8Array.of(
-        (i & 0xff000000) >> 24,
-        (i & 0x00ff0000) >> 16,
-        (i & 0x0000ff00) >> 8,
-        (i & 0x000000ff) >> 0);
-}
-
 // CREATE PRODUCT: create application transaction
 export const createProductAction = async (senderAddress, product) => {
     try {
         console.log("Adding product...")
-        console.log(product)
 
         let params = await algodClient.getTransactionParams().do()
         params.fee = algosdk.ALGORAND_MIN_TX_FEE;
@@ -50,12 +42,9 @@ export const createProductAction = async (senderAddress, product) => {
         let name = new TextEncoder().encode(product.name);
         let image = new TextEncoder().encode(product.image);
         let description = new TextEncoder().encode(product.description);
-        let price = intToArray(product.price.toString())
+        let price = intToUint8Array(product.price.toString())
 
         let appArgs = [name, image, description, price]
-
-        console.log(appArgs)
-
 
         // Create transaction
         let txn = algosdk.makeApplicationCreateTxnFromObject({
@@ -113,7 +102,7 @@ export const buyProductAction = async (senderAddress, product, count) => {
 
         // Build app args
         let buyArg = new TextEncoder().encode("buy")
-        let countArg = intToArray(count);
+        let countArg = intToUint8Array(count);
         let appArgs = [buyArg, countArg]
 
         // Buy transaction
@@ -124,7 +113,6 @@ export const buyProductAction = async (senderAddress, product, count) => {
             suggestedParams: params,
             appArgs: appArgs
         })
-        console.log(buyTxn)
 
         // Spend transaction
         let spendTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
@@ -142,11 +130,12 @@ export const buyProductAction = async (senderAddress, product, count) => {
         // Sign & submit the transaction
         if (ENVIRONMENT === "release") {
             let signedBuyTxn = buyTxn.signTxn(localAccount.sk);
+            console.log("Signed buy transaction");
             let signedSpendTxn = spendTxn.signTxn(localAccount.sk);
+            console.log("Signed spend transaction");
             tx = await algodClient.sendRawTransaction([signedBuyTxn, signedSpendTxn]).do()
         } else {
             let signedBuyTxn = await myAlgoConnect.signTransaction(buyTxn.toByte());
-            console.log("Signed buy transaction");
             console.log("Signed buy transaction");
             let signedSpendTxn = await myAlgoConnect.signTransaction(spendTxn.toByte());
             console.log("Signed spend transaction");
@@ -157,7 +146,7 @@ export const buyProductAction = async (senderAddress, product, count) => {
         let confirmedTxn = await algosdk.waitForConfirmation(algodClient, tx.txId, 4);
 
         // Get the completed Transaction
-        console.log("Transaction " + tx.txId + " confirmed in round " + confirmedTxn["confirmed-round"]);
+        console.log("Group transaction " + tx.txId + " confirmed in round " + confirmedTxn["confirmed-round"]);
 
     } catch (err) {
         console.log("err", err)
@@ -208,20 +197,8 @@ export const deleteProductAction = async (senderAddress, index) => {
     }
 }
 
-class Product {
-    constructor(name, image, description, price, sold, appId, owner) {
-
-        this.name = name;
-        this.image = image;
-        this.description = description;
-        this.price = price;
-        this.sold = sold;
-        this.appId = appId;
-        this.owner = owner;
-    }
-}
-
-export const getProductsAction = async (senderAddress) => {
+export const getProductsAction = async () => {
+    console.log("Fetching products...")
     try {
         let note = new TextEncoder().encode(appNote);
         let s = Buffer.from(note).toString("base64");
@@ -239,6 +216,7 @@ export const getProductsAction = async (senderAddress) => {
                 }
             }
         }
+        console.log("Products fetched.")
         return products
     } catch (err) {
         console.log(err);
@@ -285,7 +263,6 @@ const getApplication = async (appId) => {
         if (getField("SOLD", globalState) !== undefined) {
             sold = getField("SOLD", globalState).value.uint
         }
-
 
         return new Product(name, image, description, price, sold, appId, owner)
     } catch (err) {
