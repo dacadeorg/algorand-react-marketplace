@@ -224,17 +224,19 @@ const App = function AppWrapper() {
 
     useEffect(() => {
         (async () => {
-
-            if (!address) return;
-
-            let accountInfo = await algodClient.accountInformation(address).do();
-            console.log(accountInfo);
-
-            const _balance = accountInfo.amount;
-            setBalance(_balance);
-
+            fetchBalance();
         })();
     }, [address]);
+
+    const fetchBalance = async () => {
+        if (!address) return;
+
+        let accountInfo = await algodClient.accountInformation(address).do();
+        console.log(accountInfo);
+
+        const _balance = accountInfo.amount;
+        setBalance(_balance);
+    }
 
 
     return (
@@ -254,7 +256,7 @@ const App = function AppWrapper() {
                         </Nav.Item>
                     </Nav>
                     <main>
-                        <Products address={address}/>
+                        <Products address={address} fetchBalance={fetchBalance}/>
                     </main>
                 </Container>
 
