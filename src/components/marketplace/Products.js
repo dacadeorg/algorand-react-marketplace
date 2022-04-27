@@ -9,7 +9,7 @@ import {NotificationError, NotificationSuccess} from "../utils/Notifications";
 import {buyProductAction, createProductAction, deleteProductAction, getProductsAction,} from "../../utils/marketplace";
 import PropTypes from "prop-types";
 
-const Products = ({address}) => {
+const Products = ({address, fetchBalance}) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -39,6 +39,7 @@ const Products = ({address}) => {
             .then(_ => {
                 toast(<NotificationSuccess text="Product added successfully."/>);
                 getProducts();
+                fetchBalance();
             })
             .catch(error => {
                 console.log({error});
@@ -55,6 +56,7 @@ const Products = ({address}) => {
             .then(_ => {
                 toast(<NotificationSuccess text="Product bought successfully"/>);
                 getProducts();
+                fetchBalance();
             })
             .catch(error => {
                 console.log({error})
@@ -70,6 +72,7 @@ const Products = ({address}) => {
         deleteProductAction(address, product.appId)
             .then(_ => {
                 getProducts();
+                fetchBalance();
             })
             .catch(error => {
                 console.log({error})
@@ -112,6 +115,7 @@ const Products = ({address}) => {
 
 Products.propTypes = {
     address: PropTypes.string.isRequired,
+    fetchBalance: PropTypes.func.isRequired
 };
 
 export default Products;
