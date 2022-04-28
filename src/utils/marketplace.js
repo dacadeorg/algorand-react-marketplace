@@ -266,7 +266,6 @@ const getApplication = async (appId) => {
 
         return new Product(name, image, description, price, sold, appId, owner)
     } catch (err) {
-        // TODO how to handle deleted applications?
         // console.log(err);
     }
 }

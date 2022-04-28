@@ -9,8 +9,8 @@ export const ALGORAND_DECIMALS = 6;
 const localAccountMnemonic = "prepare abstract silly doctor comfort shaft surge soda minimum document runway holiday aim thank usage correct people render advice inch level clump quick able salad"
 export const localAccount = algosdk.mnemonicToSecretKey(localAccountMnemonic)
 
-//export const ENVIRONMENT = "testnet"
-export const ENVIRONMENT = "release"
+export const ENVIRONMENT = "testnet"
+//export const ENVIRONMENT = "release"
 
 const environment = {
     // Local private network
@@ -43,7 +43,7 @@ export const indexerClient = new algosdk.Indexer(config.indexerToken, config.ind
 
 export const myAlgoConnect = new MyAlgoConnect();
 
-export const currentRound = 21134500;
+export const currentRound = 21231700;
 
 // https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0002.md
 export const appNote = "marketplace-tutorial:uv1"
@@ -51,5 +51,5 @@ export const appNote = "marketplace-tutorial:uv1"
 // declare application state storage (immutable)
 export const localInts = 0;
 export const localBytes = 0;
-export const globalInts = 24; //# 4 for setup + 20 for choices. Use a larger number for more choices.
+export const globalInts = 24;
 export const globalBytes = 3;
