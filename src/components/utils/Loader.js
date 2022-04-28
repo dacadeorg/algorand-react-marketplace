@@ -8,4 +8,5 @@ const Loader = () => (
         </Spinner>
     </div>
 );
+
 export default Loader;
