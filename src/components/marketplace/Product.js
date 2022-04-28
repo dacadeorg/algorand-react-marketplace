@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import {Badge, Button, Card, Col, Stack} from "react-bootstrap";
-import {formatBigNumber, truncateAddress} from "../../utils/conversions";
+import {formatNumber, truncateAddress} from "../../utils/conversions";
 import Identicon from "../utils/Identicon";
 
 const Product = ({address, product, buyProduct, deleteProduct}) => {
@@ -32,7 +32,7 @@ const Product = ({address, product, buyProduct, deleteProduct}) => {
                             onClick={() => buyProduct(product)}
                             className="w-100 py-3"
                         >
-                            Buy for {formatBigNumber(price)} ALGO
+                            Buy for {formatNumber(price)} ALGO
                         </Button>
                         { product.owner === address &&
                             <Button

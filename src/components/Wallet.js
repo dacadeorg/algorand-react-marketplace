@@ -1,6 +1,6 @@
 import React from 'react';
 import {Dropdown, Spinner, Stack} from 'react-bootstrap';
-import {formatBigNumber, truncateAddress} from '../utils/conversions';
+import {formatNumber, truncateAddress} from '../utils/conversions';
 import Identicon from './utils/Identicon'
 import PropTypes from "prop-types";
 
@@ -13,7 +13,7 @@ const Wallet = ({address, name, amount, symbol, disconnect}) => {
                                      className="d-flex align-items-center border rounded-pill py-1">
                         {amount ? (
                             <>
-                                {formatBigNumber(amount)}
+                                {formatNumber(amount)}
                                 <span className="ms-1"> {symbol}</span>
                             </>
                         ) : (

@@ -9,8 +9,8 @@ export const ALGORAND_DECIMALS = 6;
 const localAccountMnemonic = "prepare abstract silly doctor comfort shaft surge soda minimum document runway holiday aim thank usage correct people render advice inch level clump quick able salad"
 export const localAccount = algosdk.mnemonicToSecretKey(localAccountMnemonic)
 
-export const ENVIRONMENT = "testnet"
-//export const ENVIRONMENT = "release"
+//export const ENVIRONMENT = "testnet"
+export const ENVIRONMENT = "release"
 
 const environment = {
     // Local private network
