@@ -26,7 +26,7 @@ const Product = ({address, product, buyProduct, deleteProduct}) => {
                 <Card.Body className="d-flex flex-column text-center">
                     <Card.Title>{name}</Card.Title>
                     <Card.Text className="flex-grow-1 ">{description}</Card.Text>
-                    <div className="d-flex flex-row gap-4">
+                    <div className="d-flex flex-row gap-3">
                         <Button
                             variant="outline-dark"
                             onClick={() => buyProduct(product)}
@@ -36,11 +36,11 @@ const Product = ({address, product, buyProduct, deleteProduct}) => {
                         </Button>
                         { product.owner === address &&
                             <Button
-                                variant="outline-dark"
+                                variant="outline-danger"
                                 onClick={() => deleteProduct(product)}
-                                className="w-100 py-3"
+                                className="w-25 py-3"
                             >
-                                Delete product
+                                Delete
                             </Button>
                         }
                     </div>
