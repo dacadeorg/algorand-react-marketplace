@@ -162,19 +162,19 @@ Visit us at - [Dacade](https://dacade.org)
 
 [contributors-shield]: https://img.shields.io/github/contributors/dacadeorg/celo-nft-minter.svg?style=for-the-badge
 
-[contributors-url]: https://github.com/dacadeorg/celo-nft-minter/graphs/contributors
+[contributors-url]: https://github.com/dacadeorg/algorand-react-marketplace/graphs/contributors
 
 [forks-shield]: https://img.shields.io/github/forks/dacadeorg/celo-nft-minter.svg?style=for-the-badge
 
-[forks-url]: https://github.com/dacadeorg/celo-nft-minter/network/members
+[forks-url]: https://github.com/dacadeorg/algorand-react-marketplace/network/members
 
 [stars-shield]: https://img.shields.io/github/stars/dacadeorg/celo-nft-minter.svg?style=for-the-badge
 
-[stars-url]: https://github.com/dacadeorg/celo-nft-minter/stargazers
+[stars-url]: https://github.com/dacadeorg/algorand-react-marketplace/stargazers
 
 [issues-shield]: https://img.shields.io/github/issues/dacadeorg/celo-nft-minter.svg?style=for-the-badge
 
-[issues-url]: https://github.com/dacadeorg/celo-nft-minter/issues
+[issues-url]: https://github.com/dacadeorg/algorand-react-marketplace/issues
 
 [license-shield]: https://img.shields.io/github/license/dacadeorg/celo-nft-minter.svg?style=for-the-badge
 
