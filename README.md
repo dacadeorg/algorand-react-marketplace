@@ -34,48 +34,32 @@ To get this project up running locally, follow these simple example steps.
 
 ### Prerequisites
 
-You will need node and yarn installed.
+- [Node.js](https://nodejs.org/en/) v16.xx.x
 
-### Installation
+### Run locally
 
-Step-by-step guide to running this Celo React boilerplate locally;
-
-1. Clone the repo
-
-[//]: # (   ```sh)
-
-[//]: # (   git clone https://github.com/dacadeorg/algorand-react-marketplace.git)
-
-[//]: # (   ```)
-2. Install NPM packages
+1. Clone repo
    ```sh
-   yarn install
+   git clone https://github.com/dacadeorg/algorand-react-marketplace.git
    ```
-   
-   or
- 
+
+2. Install packages
    ```sh
    npm install
    ```
-
-3. Run your application
-   ```sh
-   yarn start
-   ```
-   
-   or
-
+3. Run application
    ```sh
    npm run start
    ```
+4. Open development server on http://localhost:3000
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/cloudy.png)
 
-## :computer: Development - connect account
-### Local release network
+## :computer: Development: Connect account
+### Local release network using sandbox
 1. Export local account address with `./sandbox goal account export --address [account_address]`
 2. Insert address at line 9 in `src/utils/constants.js`
 3. Make sure `ENVIRONMENT` is set to `"release"` in line 13 `src/utils/constants.js`
