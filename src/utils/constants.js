@@ -48,8 +48,9 @@ export const currentRound = 21231700;
 // https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0002.md
 export const appNote = "marketplace-tutorial:uv1"
 
-// declare application state storage (immutable)
-export const localInts = 0;
-export const localBytes = 0;
-export const globalInts = 24;
-export const globalBytes = 3;
+// Maximum local storage allocation, immutable
+export const numLocalInts = 0;
+export const numLocalBytes = 0;
+// Maximum global storage allocation, immutable
+export const numGlobalInts = 2;
+export const numGlobalBytes = 3;
