@@ -60,14 +60,17 @@ To get this project up running locally, follow these simple example steps.
 
 ## :computer: Development: Connect account
 ### Local release network using sandbox
-1. Export local account address with `./sandbox goal account export --address [account_address]`
-2. Insert address at line 9 in `src/utils/constants.js`
-3. Make sure `ENVIRONMENT` is set to `"release"` in line 13 `src/utils/constants.js`
+- Clone [sandbox repo](https://github.com/algorand/sandbox) 
+- Start sandbox `./sandbox up release -v`
+- Export local account address with `./sandbox goal account export --address [account_address]`
+- Insert address at line 9 in `src/utils/constants.js`
+- Make sure `ENVIRONMENT` is set to `"release"` (`src/utils/constants.js`, line 13)
 
 ### Testnet
-1. Make sure `ENVIRONMENT` is set to `"testnet"` in line 13 `src/utils/constants.js`
-2. Create account on testnet using https://wallet.myalgo.com/
-3. Start app and connect to walle
+- Create account on testnet using [MyAlgo Wallet](https://wallet.myalgo.com/)
+- Add funds using [faucet](https://bank.testnet.algorand.network/)
+- Make sure `ENVIRONMENT` is set to `"testnet"` (`src/utils/constants.js`, line 12)
+- Start app and connect to wallet using UI
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
