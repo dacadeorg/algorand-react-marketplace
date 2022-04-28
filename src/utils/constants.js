@@ -15,8 +15,8 @@ export const ENVIRONMENT = "release"
 const environment = {
     // Local private network
     release: {
-        algodToken: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        algodServer: 'http://localhost',
+        algodToken: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        algodServer: "http://localhost",
         algodPort: 4001,
         indexerToken: "",
         indexerServer: "http://localhost",
