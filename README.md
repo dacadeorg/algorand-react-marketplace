@@ -69,7 +69,10 @@ Step-by-step guide to running this Celo React boilerplate locally;
    npm run start
    ```
 
+<p align="right">(<a href="#top">back to top</a>)</p>
 
+
+![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/cloudy.png)
 
 ## :computer: Development - connect account
 ### Local release network
@@ -137,7 +140,7 @@ Visit us at - [Dacade](https://dacade.org)
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/dacadeorg/algorand-react-marketplace
+[contributors-shield]: https://img.shields.io/github/contributors/dacadeorg/algorand-react-marketplace.svg?style=for-the-badge
 
 [contributors-url]: https://github.com/dacadeorg/algorand-react-marketplace/graphs/contributors
 
