@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {toast} from "react-toastify";
 import AddProduct from "./AddProduct";
 import Product from "./Product";
@@ -13,11 +13,7 @@ const Products = ({address, fetchBalance}) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        getProducts();
-    }, []);
-
-    const getProducts = async () => {
+    const getProducts = useCallback(async () => {
         setLoading(true);
         getProductsAction(address)
             .then(products => {
@@ -31,7 +27,11 @@ const Products = ({address, fetchBalance}) => {
             .finally(_ => {
                 setLoading(false);
             });
-    };
+    }, [address]);
+
+    useEffect(() => {
+        getProducts();
+    }, [getProducts]);
 
     const createProduct = async (data) => {
         setLoading(true);
@@ -44,10 +44,8 @@ const Products = ({address, fetchBalance}) => {
             .catch(error => {
                 console.log(error);
                 toast(<NotificationError text="Failed to create a product."/>);
-            })
-            .finally(_ => {
                 setLoading(false);
-            });
+            })
     };
 
     const buyProduct = async (product) => {
@@ -61,27 +59,23 @@ const Products = ({address, fetchBalance}) => {
             .catch(error => {
                 console.log(error)
                 toast(<NotificationError text="Failed to purchase product."/>);
-            })
-            .finally(_ => {
                 setLoading(false);
-            });
+            })
     };
 
     const deleteProduct = async (product) => {
         setLoading(true);
         deleteProductAction(address, product.appId)
             .then(_ => {
+                toast(<NotificationSuccess text="Product deleted successfully"/>);
                 getProducts();
                 fetchBalance();
             })
             .catch(error => {
                 console.log(error)
                 toast(<NotificationError text="Failed to delete product."/>);
-            })
-            .finally(_ => {
-                toast(<NotificationSuccess text="Product deleted successfully"/>);
                 setLoading(false);
-            });
+            })
     };
 
     return (
