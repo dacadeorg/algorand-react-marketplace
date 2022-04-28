@@ -18,7 +18,7 @@ const Products = ({address, fetchBalance}) => {
     }, []);
 
     const getProducts = async () => {
-        //setLoading(true);
+        setLoading(true);
         getProductsAction(address)
             .then(products => {
                 if (products) {
@@ -26,10 +26,10 @@ const Products = ({address, fetchBalance}) => {
                 }
             })
             .catch(error => {
-                console.log({error});
+                console.log(error);
             })
             .finally(_ => {
-                //setLoading(false);
+                setLoading(false);
             });
     };
 
@@ -42,7 +42,7 @@ const Products = ({address, fetchBalance}) => {
                 fetchBalance();
             })
             .catch(error => {
-                console.log({error});
+                console.log(error);
                 toast(<NotificationError text="Failed to create a product."/>);
             })
             .finally(_ => {
@@ -59,7 +59,7 @@ const Products = ({address, fetchBalance}) => {
                 fetchBalance();
             })
             .catch(error => {
-                console.log({error})
+                console.log(error)
                 toast(<NotificationError text="Failed to purchase product."/>);
             })
             .finally(_ => {
@@ -75,7 +75,7 @@ const Products = ({address, fetchBalance}) => {
                 fetchBalance();
             })
             .catch(error => {
-                console.log({error})
+                console.log(error)
                 toast(<NotificationError text="Failed to delete product."/>);
             })
             .finally(_ => {
