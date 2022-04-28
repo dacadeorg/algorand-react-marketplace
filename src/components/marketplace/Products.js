@@ -48,9 +48,9 @@ const Products = ({address, fetchBalance}) => {
             })
     };
 
-    const buyProduct = async (product) => {
+    const buyProduct = async (product, count) => {
         setLoading(true);
-        buyProductAction(address, product, 1)
+        buyProductAction(address, product, count)
             .then(_ => {
                 toast(<NotificationSuccess text="Product bought successfully"/>);
                 getProducts();

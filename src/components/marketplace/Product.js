@@ -1,6 +1,6 @@
-import React from "react";
+import React, {useState} from "react";
 import PropTypes from "prop-types";
-import {Badge, Button, Card, Col, Stack} from "react-bootstrap";
+import {Badge, Button, Card, Col, FloatingLabel, Form, Stack} from "react-bootstrap";
 import {formatNumber, truncateAddress} from "../../utils/conversions";
 import Identicon from "../utils/Identicon";
 
@@ -8,9 +8,11 @@ const Product = ({address, product, buyProduct, deleteProduct}) => {
     const {name, image, description, price, sold, appId, owner} =
         product;
 
+    const [count, setCount] = useState(1)
+
     return (
         <Col key={appId}>
-            <Card className=" h-100">
+            <Card className="h-100">
                 <Card.Header>
                     <Stack direction="horizontal" gap={2}>
                         <span className="font-monospace text-secondary">{truncateAddress(owner)}</span>
@@ -20,30 +22,45 @@ const Product = ({address, product, buyProduct, deleteProduct}) => {
                         </Badge>
                     </Stack>
                 </Card.Header>
-                <div className=" ratio ratio-4x3">
+                <div className="ratio ratio-4x3">
                     <img src={image} alt={name} style={{objectFit: "cover"}}/>
                 </div>
                 <Card.Body className="d-flex flex-column text-center">
                     <Card.Title>{name}</Card.Title>
-                    <Card.Text className="flex-grow-1 ">{description}</Card.Text>
-                    <div className="d-flex flex-row gap-3">
+                    <Card.Text className="flex-grow-1">{description}</Card.Text>
+                    <Form className="d-flex align-content-stretch flex-row gap-2">
+                        <FloatingLabel
+                            controlId="inputCount"
+                            label="Count"
+                            className="w-25"
+                        >
+                            <Form.Control
+                                type="number"
+                                value={count}
+                                min="1"
+                                max="10"
+                                onChange={(e) => {
+                                    setCount(Number(e.target.value));
+                                }}
+                            />
+                        </FloatingLabel>
                         <Button
                             variant="outline-dark"
-                            onClick={() => buyProduct(product)}
-                            className="w-100 py-3"
+                            onClick={() => buyProduct(product, count)}
+                            className="w-75 py-3"
                         >
-                            Buy for {formatNumber(price)} ALGO
+                            Buy for {formatNumber(price) * count} ALGO
                         </Button>
-                        { product.owner === address &&
+                        {product.owner === address &&
                             <Button
                                 variant="outline-danger"
                                 onClick={() => deleteProduct(product)}
-                                className="w-25 py-3"
+                                className="btn"
                             >
-                                Delete
+                                <i className="bi bi-trash"></i>
                             </Button>
                         }
-                    </div>
+                    </Form>
                 </Card.Body>
             </Card>
         </Col>
