@@ -44,7 +44,7 @@ Step-by-step guide to running this Celo React boilerplate locally;
 
 [//]: # (   ```sh)
 
-[//]: # (   git clone https://github.com/dacadeorg/celo-nft-minter.git)
+[//]: # (   git clone https://github.com/dacadeorg/algorand-react-marketplace.git)
 
 [//]: # (   ```)
 2. Install NPM packages
@@ -71,40 +71,17 @@ Step-by-step guide to running this Celo React boilerplate locally;
 
 
 
-### Smart-Contract-Deployment
+## :computer: Development - connect account
+### Local release network
+1. Export local account address with `./sandbox goal account export --address [account_address]`
+2. Insert address at line 9 in `src/utils/constants.js`
+3. Make sure `ENVIRONMENT` is set to `"release"` in line 13 `src/utils/constants.js`
 
-Step-by-step guide to redeploying smart contract using your address to enable you interact with it.
+### Testnet
+1. Make sure `ENVIRONMENT` is set to `"testnet"` in line 13 `src/utils/constants.js`
+2. Create account on testnet using https://wallet.myalgo.com/
+3. Start app and connect to walle
 
-1. Update the contracts/MyContract.sol file with your smart contract
-   
-   
-2. Compile the smart contract
-   ```sh
-   npm run compile
-   ```
-3. Run tests on smart contract
-   ```sh
-   npm run test-contract
-   ```
-4. Update env file
-
-* Create a file in the root directory called ".env"
-* Create a key called MNEMONIC and paste in your mnemonic key. e.g
-     ```js
-   MNEMONIC=asdasd adeew grege egegs nbrebe fwf vwefwf wvwvwv wevw vbtbtr wcvd
-   ```
-
-4. Deploy the smart contract
-   ```sh
-    npm run deploy
-   ```
-   This command will update the src/contract files with the deployed smart contract ABI and contract address
-
-
-5. Run the project
-   ```sh
-    npm run start
-   ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -160,23 +137,23 @@ Visit us at - [Dacade](https://dacade.org)
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/dacadeorg/celo-nft-minter.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/dacadeorg/algorand-react-marketplace
 
 [contributors-url]: https://github.com/dacadeorg/algorand-react-marketplace/graphs/contributors
 
-[forks-shield]: https://img.shields.io/github/forks/dacadeorg/celo-nft-minter.svg?style=for-the-badge
+[forks-shield]: https://img.shields.io/github/forks/dacadeorg/algorand-react-marketplace.svg?style=for-the-badge
 
 [forks-url]: https://github.com/dacadeorg/algorand-react-marketplace/network/members
 
-[stars-shield]: https://img.shields.io/github/stars/dacadeorg/celo-nft-minter.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/dacadeorg/algorand-react-marketplace.svg?style=for-the-badge
 
 [stars-url]: https://github.com/dacadeorg/algorand-react-marketplace/stargazers
 
-[issues-shield]: https://img.shields.io/github/issues/dacadeorg/celo-nft-minter.svg?style=for-the-badge
+[issues-shield]: https://img.shields.io/github/issues/dacadeorg/algorand-react-marketplace.svg?style=for-the-badge
 
 [issues-url]: https://github.com/dacadeorg/algorand-react-marketplace/issues
 
-[license-shield]: https://img.shields.io/github/license/dacadeorg/celo-nft-minter.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/dacadeorg/algorand-react-marketplace.svg?style=for-the-badge
 
 [license-url]: ./README/LICENSE.txt
 
