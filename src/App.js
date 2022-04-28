@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import Cover from "./components/Cover";
 import './App.css';
 import Wallet from "./components/Wallet";
@@ -15,11 +15,20 @@ const App = function AppWrapper() {
     const [name, setName] = useState(null);
     const [balance, setBalance] = useState(0);
 
+    const fetchBalance = useCallback(async () => {
+        if (!address) return;
+
+        let accountInfo = await algodClient.accountInformation(address).do();
+
+        const _balance = accountInfo.amount;
+        setBalance(_balance);
+    }, [address]);
+
     useEffect(() => {
         (async () => {
             fetchBalance();
         })();
-    }, [address]);
+    }, [address, fetchBalance]);
 
     const connectWallet = async () => {
         myAlgoConnect.connect()
@@ -28,7 +37,7 @@ const App = function AppWrapper() {
                 setAddress(_account.address);
                 setName(_account.name);
             }).catch(error => {
-            console.log('Could not connect MyAlgo wallet');
+            console.log('Could not connect to MyAlgo wallet');
             console.error(error);
         })
     };
@@ -38,16 +47,6 @@ const App = function AppWrapper() {
         setName(null);
         setBalance(null);
     };
-
-    const fetchBalance = async () => {
-        if (!address) return;
-
-        let accountInfo = await algodClient.accountInformation(address).do();
-
-        const _balance = accountInfo.amount;
-        setBalance(_balance);
-    };
-
 
     return (
         <>
