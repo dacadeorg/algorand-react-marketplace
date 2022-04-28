@@ -1,18 +1,20 @@
 import algosdk from "algosdk";
 import {
-    localAccount,
     algodClient,
-    indexerClient,
-    myAlgoConnect,
-    ENVIRONMENT,
-    currentRound,
     appNote,
-    numLocalInts, numLocalBytes, numGlobalInts, numGlobalBytes
+    currentRound,
+    ENVIRONMENT,
+    indexerClient,
+    localAccount,
+    myAlgoConnect,
+    numGlobalBytes,
+    numGlobalInts,
+    numLocalBytes,
+    numLocalInts
 } from "./constants";
 /* eslint import/no-webpack-loader-syntax: off */
 import approvalProgram from "!!raw-loader!../contracts/marketplace_approval.teal";
 import clearStateProgram from "!!raw-loader!../contracts/marketplace_clear_state.teal";
-import {intToUint8Array} from "./conversions";
 import {Product} from "./models";
 
 
@@ -42,7 +44,7 @@ export const createProductAction = async (senderAddress, product) => {
         let name = new TextEncoder().encode(product.name);
         let image = new TextEncoder().encode(product.image);
         let description = new TextEncoder().encode(product.description);
-        let price = intToUint8Array(product.price.toString())
+        let price = algosdk.encodeUint64(product.price);
 
         let appArgs = [name, image, description, price]
 
@@ -102,7 +104,7 @@ export const buyProductAction = async (senderAddress, product, count) => {
 
         // Build app args
         let buyArg = new TextEncoder().encode("buy")
-        let countArg = intToUint8Array(count);
+        let countArg = algosdk.encodeUint64(count);
         let appArgs = [buyArg, countArg]
 
         // Buy transaction
