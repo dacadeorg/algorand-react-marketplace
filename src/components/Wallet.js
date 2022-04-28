@@ -27,7 +27,10 @@ const Wallet = ({address, name, amount, symbol, disconnect}) => {
                                        target="_blank">
                             <Stack direction="horizontal" gap={2}>
                                 <i className="bi bi-person-circle fs-4"/>
-                                <span className="font-monospace">{name || truncateAddress(address)}</span>
+                                <div className="d-flex flex-column">
+                                    {name && (<span className="font-monospace">{name}</span>)}
+                                    <span className="font-monospace">{truncateAddress(address)}</span>
+                                </div>
                             </Stack>
                         </Dropdown.Item>
                         <Dropdown.Divider/>
