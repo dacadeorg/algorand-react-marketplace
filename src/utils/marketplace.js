@@ -7,7 +7,7 @@ import {
     ENVIRONMENT,
     currentRound,
     appNote,
-    localInts, localBytes, globalInts, globalBytes
+    numLocalInts, numLocalBytes, numGlobalInts, numGlobalBytes
 } from "./constants";
 /* eslint import/no-webpack-loader-syntax: off */
 import approvalProgram from "!!raw-loader!../contracts/marketplace_approval.teal";
@@ -53,10 +53,10 @@ export const createProductAction = async (senderAddress, product) => {
             onComplete: algosdk.OnApplicationComplete.NoOpOC,
             approvalProgram: compiledApprovalProgram,
             clearProgram: compiledClearStateProgram,
-            numLocalInts: localInts,
-            numLocalByteSlices: localBytes,
-            numGlobalInts: globalInts,
-            numGlobalByteSlices: globalBytes,
+            numLocalInts: numLocalInts,
+            numLocalByteSlices: numLocalBytes,
+            numGlobalInts: numGlobalInts,
+            numGlobalByteSlices: numGlobalBytes,
             note: note,
             appArgs: appArgs
         });
