@@ -3,11 +3,10 @@ import MyAlgoConnect from "@randlabs/myalgo-connect";
 
 export const ALGORAND_DECIMALS = 6;
 
-// local (release) accounts
-// Get mnemonics from existing accounts with ./sandbox goal account export --address [account_address]
-//const localAccountMnemonic = "save ahead tired island slush caught medal tilt amused dream decade situate wear stuff flower mixture future car law must hungry dismiss ketchup abstract share"
-const localAccountMnemonic = "prepare abstract silly doctor comfort shaft surge soda minimum document runway holiday aim thank usage correct people render advice inch level clump quick able salad"
-export const localAccount = algosdk.mnemonicToSecretKey(localAccountMnemonic)
+// local (release) account
+// 1. Get mnemonics from existing accounts with ./sandbox goal account export --address [account_address]
+// 2. Update .env.development with local account mnemonic
+export const localAccount = algosdk.mnemonicToSecretKey(process.env.REACT_APP_LOCAL_ACCOUNT_MNEMONIC)
 
 //export const ENVIRONMENT = "testnet"
 export const ENVIRONMENT = "release"
