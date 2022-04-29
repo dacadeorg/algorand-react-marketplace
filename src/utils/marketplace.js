@@ -16,9 +16,10 @@ import {
 import approvalProgram from "!!raw-loader!../contracts/marketplace_approval.teal";
 import clearStateProgram from "!!raw-loader!../contracts/marketplace_clear_state.teal";
 import {Product} from "./models";
+import {base64ToUTF8String, utf8ToBase64String} from "./conversions";
 
 
-// Compile Program
+// Compile smart contract in .teal format to program
 const compileProgram = async (programSource) => {
     let encoder = new TextEncoder();
     let programBytes = encoder.encode(programSource);
@@ -26,7 +27,7 @@ const compileProgram = async (programSource) => {
     return new Uint8Array(Buffer.from(compileResponse.result, "base64"));
 }
 
-// CREATE PRODUCT: create application transaction
+// CREATE PRODUCT: ApplicationCreateTxn
 export const createProductAction = async (senderAddress, product) => {
     console.log("Adding product...")
 
@@ -38,7 +39,7 @@ export const createProductAction = async (senderAddress, product) => {
     const compiledApprovalProgram = await compileProgram(approvalProgram)
     const compiledClearStateProgram = await compileProgram(clearStateProgram)
 
-    // Build note and app args
+    // Build note to identify transaction later and required app args as Uint8Arrays
     let note = new TextEncoder().encode(appNote);
     let name = new TextEncoder().encode(product.name);
     let image = new TextEncoder().encode(product.image);
@@ -47,7 +48,7 @@ export const createProductAction = async (senderAddress, product) => {
 
     let appArgs = [name, image, description, price]
 
-    // Create transaction
+    // Create ApplicationCreateTxn
     let txn = algosdk.makeApplicationCreateTxnFromObject({
         from: senderAddress,
         suggestedParams: params,
@@ -62,7 +63,7 @@ export const createProductAction = async (senderAddress, product) => {
         appArgs: appArgs
     });
 
-    // Transaction ID
+    // Get transaction ID
     let txId = txn.txID().toString();
 
     // Sign & submit the transaction
@@ -82,26 +83,26 @@ export const createProductAction = async (senderAddress, product) => {
     // Get the completed Transaction
     console.log("Transaction " + txId + " confirmed in round " + confirmedTxn["confirmed-round"]);
 
-    // Display results
+    // Get created application id and notify about completion
     let transactionResponse = await algodClient.pendingTransactionInformation(txId).do()
     let appId = transactionResponse['application-index'];
     console.log("Created new app-id: ", appId);
     return appId;
 }
 
-// BUY PRODUCT: group transaction
+// BUY PRODUCT: Group transaction consisting of ApplicationCallTxn and PaymentTxn
 export const buyProductAction = async (senderAddress, product, count) => {
     console.log("Buying product...");
     let params = await algodClient.getTransactionParams().do();
     params.fee = algosdk.ALGORAND_MIN_TX_FEE;
     params.flatFee = true;
 
-    // Build app args
+    // Build required app args as Uint8Array
     let buyArg = new TextEncoder().encode("buy")
     let countArg = algosdk.encodeUint64(count);
     let appArgs = [buyArg, countArg]
 
-    // Buy transaction
+    // Create ApplicationCallTxn
     let buyTxn = algosdk.makeApplicationCallTxnFromObject({
         from: senderAddress,
         appIndex: product.appId,
@@ -110,7 +111,7 @@ export const buyProductAction = async (senderAddress, product, count) => {
         appArgs: appArgs
     })
 
-    // Spend transaction
+    // Create PaymentTxn
     let spendTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
         from: senderAddress,
         to: product.owner,
@@ -119,11 +120,11 @@ export const buyProductAction = async (senderAddress, product, count) => {
         suggestedParams: params
     })
 
-    // Group transaction
+    // Create group transaction out of previously build transactions
     algosdk.assignGroupID([buyTxn, spendTxn])
 
     let tx = null;
-    // Sign & submit the transaction
+    // Sign & submit the group transaction
     if (ENVIRONMENT === "localSandbox") {
         let signedBuyTxn = buyTxn.signTxn(localAccount.sk);
         console.log("Signed buy transaction");
@@ -138,14 +139,14 @@ export const buyProductAction = async (senderAddress, product, count) => {
         tx = await algodClient.sendRawTransaction([signedBuyTxn.blob, signedSpendTxn.blob]).do()
     }
 
-    // Wait for transaction to be confirmed
+    // Wait for group transaction to be confirmed
     let confirmedTxn = await algosdk.waitForConfirmation(algodClient, tx.txId, 4);
 
-    // Get the completed Transaction
+    // Notify about completion
     console.log("Group transaction " + tx.txId + " confirmed in round " + confirmedTxn["confirmed-round"]);
 }
 
-// DELETE PRODUCT
+// DELETE PRODUCT: ApplicationDeleteTxn
 export const deleteProductAction = async (senderAddress, index) => {
     console.log("Deleting application...");
 
@@ -153,12 +154,12 @@ export const deleteProductAction = async (senderAddress, index) => {
     params.fee = algosdk.ALGORAND_MIN_TX_FEE;
     params.flatFee = true;
 
-    // Delete transaction
+    // Create ApplicationDeleteTxn
     let txn = algosdk.makeApplicationDeleteTxnFromObject({
         from: senderAddress, suggestedParams: params, appIndex: index,
     });
 
-    // Transaction ID
+    // Get transaction ID
     let txId = txn.txID().toString();
 
     // Sign & submit the transaction
@@ -178,16 +179,19 @@ export const deleteProductAction = async (senderAddress, index) => {
     // Get the completed Transaction
     console.log("Transaction " + txId + " confirmed in round " + confirmedTxn["confirmed-round"]);
 
-    // Display results
+    // Get application id of deleted application and notify about completion
     let transactionResponse = await algodClient.pendingTransactionInformation(txId).do();
     let appId = transactionResponse['txn']['txn'].apid;
     console.log("Deleted app-id: ", appId);
 }
 
+// GET PRODUCTS: Use indexer
 export const getProductsAction = async () => {
     console.log("Fetching products...")
     let note = new TextEncoder().encode(appNote);
     let s = Buffer.from(note).toString("base64");
+
+    // Step 1: Get all transactions by notePrefix (+ minRound filter for performance)
     let transactionInfo = await indexerClient.searchForTransactions()
         .notePrefix(s)
         .minRound(ENVIRONMENT === "localSandbox" ? 0 : currentRound)
@@ -196,6 +200,7 @@ export const getProductsAction = async () => {
     for (const transaction of transactionInfo.transactions) {
         let appId = transaction["created-application-index"]
         if (appId) {
+            // Step 2: Get each application by application id
             let product = await getApplication(appId)
             if (product) {
                 products.push(product)
@@ -208,9 +213,11 @@ export const getProductsAction = async () => {
 
 const getApplication = async (appId) => {
     try {
+        // 1. Get application by appId
         let response = await indexerClient.lookupApplications(appId).do();
         let globalState = response.application.params["global-state"]
 
+        // 2. Parse fields of response and return product
         let owner = response.application.params.creator
         let name = ""
         let image = ""
@@ -220,23 +227,23 @@ const getApplication = async (appId) => {
 
         const getField = (fieldName, globalState) => {
             return globalState.find(state => {
-                return state.key === Buffer.from(fieldName, 'utf8').toString('base64');
+                return state.key === utf8ToBase64String(fieldName);
             })
         }
 
         if (getField("NAME", globalState) !== undefined) {
             let field = getField("NAME", globalState).value.bytes
-            name = Buffer.from(field, 'base64').toString("utf-8")
+            name = base64ToUTF8String(field)
         }
 
         if (getField("IMAGE", globalState) !== undefined) {
             let field = getField("IMAGE", globalState).value.bytes
-            image = Buffer.from(field, 'base64').toString("utf-8")
+            image = base64ToUTF8String(field)
         }
 
         if (getField("DESCRIPTION", globalState) !== undefined) {
             let field = getField("DESCRIPTION", globalState).value.bytes
-            description = Buffer.from(field, 'base64').toString("utf-8")
+            description = base64ToUTF8String(field)
         }
 
         if (getField("PRICE", globalState) !== undefined) {
@@ -250,6 +257,5 @@ const getApplication = async (appId) => {
         return new Product(name, image, description, price, sold, appId, owner)
     } catch (err) {
         return null;
-        // console.log(err);
     }
 }
