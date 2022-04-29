@@ -59,9 +59,9 @@ To get this project up running locally, follow these simple example steps.
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/cloudy.png)
 
 ## :computer: Development: Connect wallet
-### Local network using sandbox
-- Clone [sandbox repo](https://github.com/algorand/sandbox) 
-- Start sandbox `./sandbox up release -v`
+### Local network using Algorand Sandbox
+- Clone [Algorand Sandbox repository](https://github.com/algorand/sandbox) 
+- Start Algorand Sandbox `./sandbox up release -v`
 - Export local account mnemonic phrase with `./sandbox goal account export --address [account_address]`
 - Insert mnemonic phrase in `.env.development` as `REACT_APP_LOCAL_ACCOUNT_MNEMONIC`
   - :warning: Make sure to run `npm run start` again after changing .env file to load changes
