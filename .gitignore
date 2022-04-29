@@ -31,7 +31,3 @@ typechain
 # JetBrains IDE
 .idea/
 *.iml
-
-#Hardhat files
-cache
-artifacts
