@@ -66,7 +66,7 @@ export const createProductAction = async (senderAddress, product) => {
     let txId = txn.txID().toString();
 
     // Sign & submit the transaction
-    if (ENVIRONMENT === "release") {
+    if (ENVIRONMENT === "localSandbox") {
         let signedTxn = txn.signTxn(localAccount.sk);
         console.log("Signed transaction with txID: %s", txId);
         await algodClient.sendRawTransaction(signedTxn).do()
@@ -124,7 +124,7 @@ export const buyProductAction = async (senderAddress, product, count) => {
 
     let tx = null;
     // Sign & submit the transaction
-    if (ENVIRONMENT === "release") {
+    if (ENVIRONMENT === "localSandbox") {
         let signedBuyTxn = buyTxn.signTxn(localAccount.sk);
         console.log("Signed buy transaction");
         let signedSpendTxn = spendTxn.signTxn(localAccount.sk);
@@ -162,7 +162,7 @@ export const deleteProductAction = async (senderAddress, index) => {
     let txId = txn.txID().toString();
 
     // Sign & submit the transaction
-    if (ENVIRONMENT === "release") {
+    if (ENVIRONMENT === "localSandbox") {
         let signedTxn = txn.signTxn(localAccount.sk);
         console.log("Signed transaction with txID: %s", txId);
         await algodClient.sendRawTransaction(signedTxn).do()
@@ -190,7 +190,7 @@ export const getProductsAction = async () => {
     let s = Buffer.from(note).toString("base64");
     let transactionInfo = await indexerClient.searchForTransactions()
         .notePrefix(s)
-        .minRound(ENVIRONMENT === "release" ? 0 : currentRound)
+        .minRound(ENVIRONMENT === "localSandbox" ? 0 : currentRound)
         .do();
     let products = []
     for (const transaction of transactionInfo.transactions) {

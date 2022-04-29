@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import PropTypes from "prop-types";
 import {Badge, Button, Card, Col, FloatingLabel, Form, Stack} from "react-bootstrap";
-import {formatNumber, truncateAddress} from "../../utils/conversions";
+import {microAlgosToString, truncateAddress} from "../../utils/conversions";
 import Identicon from "../utils/Identicon";
 
 const Product = ({address, product, buyProduct, deleteProduct}) => {
@@ -49,7 +49,7 @@ const Product = ({address, product, buyProduct, deleteProduct}) => {
                             onClick={() => buyProduct(product, count)}
                             className="w-75 py-3"
                         >
-                            Buy for {formatNumber(price) * count} ALGO
+                            Buy for {microAlgosToString(price) * count} ALGO
                         </Button>
                         {product.owner === address &&
                             <Button

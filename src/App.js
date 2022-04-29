@@ -21,7 +21,7 @@ const App = function AppWrapper() {
     };
 
     const connectWallet = async () => {
-        if (ENVIRONMENT === "release") {
+        if (ENVIRONMENT === "localSandbox") {
             const _address = localAccount.addr
             setAddress(_address);
             fetchBalance(_address);

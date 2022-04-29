@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from "react";
 import PropTypes from "prop-types";
 import {Button, FloatingLabel, Form, Modal} from "react-bootstrap";
-import {inputNumber} from "../../utils/conversions";
+import {stringToMicroAlgos} from "../../utils/conversions";
 
 const AddProduct = ({createProduct}) => {
     const [name, setName] = useState("");
@@ -84,7 +84,7 @@ const AddProduct = ({createProduct}) => {
                                 type="text"
                                 placeholder="Price"
                                 onChange={(e) => {
-                                    setPrice(inputNumber(e.target.value));
+                                    setPrice(stringToMicroAlgos(e.target.value));
                                 }}
                             />
                         </FloatingLabel>

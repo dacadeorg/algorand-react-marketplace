@@ -1,19 +1,19 @@
 import algosdk from "algosdk";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 
-export const ALGORAND_DECIMALS = 6;
+// See README.md on how to create and start a local sandbox environment
+//export const ENVIRONMENT = "localSandbox"
+export const ENVIRONMENT = "testnet"
 
 // local (release) account
 // 1. Get mnemonics from existing accounts with ./sandbox goal account export --address [account_address]
 // 2. Update .env.development with local account mnemonic
 export const localAccount = algosdk.mnemonicToSecretKey(process.env.REACT_APP_LOCAL_ACCOUNT_MNEMONIC)
 
-//export const ENVIRONMENT = "testnet"
-export const ENVIRONMENT = "release"
-
-const environment = {
+const apiEnvironment = {
     // Local private network
-    release: {
+    // https://developer.algorand.org/docs/sdks/javascript/#connect-your-client
+    localSandbox: {
         algodToken: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         algodServer: "http://localhost",
         algodPort: 4001,
@@ -22,6 +22,7 @@ const environment = {
         indexerPort: 8980,
     },
     // Testnet using purestake API
+    // An API key can be obtained after registering on https://developer.purestake.io/signup
     testnet: {
         algodToken: {
             "X-API-Key": "nUNvDv87ov6WwXYAXCtouVXQ568FJoG7MeRpSKD7",
@@ -34,7 +35,7 @@ const environment = {
     }
 }
 
-const config = environment[ENVIRONMENT]
+const config = apiEnvironment[ENVIRONMENT]
 
 export const algodClient = new algosdk.Algodv2(config.algodToken, config.algodServer, config.algodPort)
 
@@ -43,6 +44,8 @@ export const indexerClient = new algosdk.Indexer(config.indexerToken, config.ind
 export const myAlgoConnect = new MyAlgoConnect();
 
 export const currentRound = 21231700;
+
+export const ALGORAND_DECIMALS = 6;
 
 // https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0002.md
 export const appNote = "marketplace-tutorial:uv1"

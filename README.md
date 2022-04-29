@@ -58,19 +58,21 @@ To get this project up running locally, follow these simple example steps.
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/cloudy.png)
 
-## :computer: Development: Connect account
-### Local release network using sandbox
+## :computer: Development: Connect wallet
+### Local network using sandbox
 - Clone [sandbox repo](https://github.com/algorand/sandbox) 
 - Start sandbox `./sandbox up release -v`
-- Export local account address with `./sandbox goal account export --address [account_address]`
-- Insert address at line 9 in `src/utils/constants.js`
-- Make sure `ENVIRONMENT` is set to `"release"` (`src/utils/constants.js`, line 13)
+- Export local account mnemonic phrase with `./sandbox goal account export --address [account_address]`
+- Insert mnemonic phrase in `.env.development` as `REACT_APP_LOCAL_ACCOUNT_MNEMONIC`
+  - :warning: Make sure to run `npm run start` again after changing .env file to load changes
+- Make sure `ENVIRONMENT` is set to `"localSandbox"` (`src/utils/constants.js`, line 5)
+- Start app and click "Connect Wallet"
 
 ### Testnet
 - Create account on testnet using [MyAlgo Wallet](https://wallet.myalgo.com/)
 - Add funds using [faucet](https://bank.testnet.algorand.network/)
-- Make sure `ENVIRONMENT` is set to `"testnet"` (`src/utils/constants.js`, line 12)
-- Start app and connect to wallet using UI
+- Make sure `ENVIRONMENT` is set to `"testnet"` (`src/utils/constants.js`, line 6)
+- Start app, click "Connect Wallet" and MyAlgo Wallet UI to connect testnet wallet
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
