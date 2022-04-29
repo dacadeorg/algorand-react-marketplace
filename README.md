@@ -30,8 +30,6 @@
 
 ## :point_down: Getting Started
 
-To get this project up running locally, follow these simple example steps.
-
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/en/) v16.xx.x
