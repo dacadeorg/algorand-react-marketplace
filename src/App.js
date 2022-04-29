@@ -7,7 +7,6 @@ import Products from "./components/marketplace/Products";
 import {algodClient, ENVIRONMENT, localAccount, myAlgoConnect} from "./utils/constants";
 import {Notification} from "./components/utils/Notifications";
 
-
 const App = function AppWrapper() {
 
     const [address, setAddress] = useState(null);
@@ -15,9 +14,14 @@ const App = function AppWrapper() {
     const [balance, setBalance] = useState(0);
 
     const fetchBalance = async (accountAddress) => {
-        let accountInfo = await algodClient.accountInformation(accountAddress).do();
-        const _balance = accountInfo.amount;
-        setBalance(_balance);
+        algodClient.accountInformation(accountAddress).do()
+            .then(accountInfo => {
+                const _balance = accountInfo.amount;
+                setBalance(_balance);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     };
 
     const connectWallet = async () => {
@@ -27,9 +31,9 @@ const App = function AppWrapper() {
             fetchBalance(_address);
         } else {
             myAlgoConnect.connect()
-                .then(async accounts => {
+                .then(accounts => {
                     const _account = accounts[0];
-                    await setAddress(_account.address);
+                    setAddress(_account.address);
                     setName(_account.name);
                     fetchBalance(_account.address);
                 }).catch(error => {
