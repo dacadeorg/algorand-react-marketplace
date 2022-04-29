@@ -1,6 +1,6 @@
 import React from 'react';
 import {Dropdown, Spinner, Stack} from 'react-bootstrap';
-import {formatNumber, truncateAddress} from '../utils/conversions';
+import {microAlgosToString, truncateAddress} from '../utils/conversions';
 import Identicon from './utils/Identicon'
 import PropTypes from "prop-types";
 
@@ -15,7 +15,7 @@ const Wallet = ({address, name, amount, symbol, disconnect}) => {
                                  className="d-flex align-items-center border rounded-pill py-1">
                     {amount ? (
                         <>
-                            {formatNumber(amount)}
+                            {microAlgosToString(amount)}
                             <span className="ms-1"> {symbol}</span>
                         </>
                     ) : (
