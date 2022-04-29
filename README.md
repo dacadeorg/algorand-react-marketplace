@@ -72,7 +72,7 @@ To get this project up running locally, follow these simple example steps.
 - Create account on testnet using [MyAlgo Wallet](https://wallet.myalgo.com/)
 - Add funds using [faucet](https://bank.testnet.algorand.network/)
 - Make sure `ENVIRONMENT` is set to `"testnet"` (`src/utils/constants.js`, line 6)
-- Start app, click "Connect Wallet" and MyAlgo Wallet UI to connect testnet wallet
+- Start app, click "Connect Wallet" and use MyAlgo Wallet UI to connect testnet wallet
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
