@@ -1,19 +1,10 @@
-import {useEffect, useRef} from "react";
-import Jazzicon from "@metamask/jazzicon";
+import Jazzicon from "react-jazzicon";
 
-export default function Identicon({address, size, ...rest}) {
-    const ref = useRef();
-
-    useEffect(() => {
-        if (address && ref.current) {
-            ref.current.innerHTML = "";
-            ref.current.appendChild(Jazzicon(size, parseInt(address.slice(2, 10), 16)));
-        }
-    }, [address, size]);
+export default function Identicon({size, address, ...rest}) {
 
     return (
-        <div {...rest} >
-            <div ref={ref} style={{width: `${size}px`, height: `${size}px`}}/>
+        <div {...rest} style={{width: `${size}px`, height: `${size}px`}}>
+            <Jazzicon diameter={size} seed={parseInt(address.slice(2, 10), 16)}/>
         </div>
     )
 }
