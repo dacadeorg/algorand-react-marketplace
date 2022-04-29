@@ -16,7 +16,7 @@ const Product = ({address, product, buyProduct, deleteProduct}) => {
                 <Card.Header>
                     <Stack direction="horizontal" gap={2}>
                         <span className="font-monospace text-secondary">{truncateAddress(owner)}</span>
-                        <Identicon address={owner} size={28} className="ms-2 me-1"/>
+                        <Identicon size={28} address={owner}/>
                         <Badge bg="secondary" className="ms-auto">
                             {sold} Sold
                         </Badge>

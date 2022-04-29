@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useState} from "react";
 import Cover from "./components/Cover";
 import './App.css';
 import Wallet from "./components/Wallet";
@@ -10,40 +10,37 @@ import {Notification} from "./components/utils/Notifications";
 
 const App = function AppWrapper() {
 
-    const initAddress = ENVIRONMENT === "release" ? localAccount.addr : null;
-    const [address, setAddress] = useState(initAddress);
+    const [address, setAddress] = useState(null);
     const [name, setName] = useState(null);
     const [balance, setBalance] = useState(0);
 
-    const fetchBalance = useCallback(async () => {
-        if (!address) return;
-
-        let accountInfo = await algodClient.accountInformation(address).do();
-
+    const fetchBalance = async (accountAddress) => {
+        let accountInfo = await algodClient.accountInformation(accountAddress).do();
         const _balance = accountInfo.amount;
         setBalance(_balance);
-    }, [address]);
-
-    useEffect(() => {
-        (async () => {
-            fetchBalance();
-        })();
-    }, [address, fetchBalance]);
+    };
 
     const connectWallet = async () => {
-        myAlgoConnect.connect()
-            .then(accounts => {
-                const _account = accounts[0];
-                setAddress(_account.address);
-                setName(_account.name);
-            }).catch(error => {
-            console.log('Could not connect to MyAlgo wallet');
-            console.error(error);
-        })
+        if (ENVIRONMENT === "release") {
+            const _address = localAccount.addr
+            setAddress(_address);
+            fetchBalance(_address);
+        } else {
+            myAlgoConnect.connect()
+                .then(async accounts => {
+                    const _account = accounts[0];
+                    await setAddress(_account.address);
+                    setName(_account.name);
+                    fetchBalance(_account.address);
+                }).catch(error => {
+                console.log('Could not connect to MyAlgo wallet');
+                console.error(error);
+            })
+        }
     };
 
     const disconnect = () => {
-        setAddress(initAddress);
+        setAddress(null);
         setName(null);
         setBalance(null);
     };

@@ -36,10 +36,10 @@ const Products = ({address, fetchBalance}) => {
     const createProduct = async (data) => {
         setLoading(true);
         createProductAction(address, data)
-            .then(_ => {
+            .then(() => {
                 toast(<NotificationSuccess text="Product added successfully."/>);
                 getProducts();
-                fetchBalance();
+                fetchBalance(address);
             })
             .catch(error => {
                 console.log(error);
@@ -51,10 +51,10 @@ const Products = ({address, fetchBalance}) => {
     const buyProduct = async (product, count) => {
         setLoading(true);
         buyProductAction(address, product, count)
-            .then(_ => {
+            .then(() => {
                 toast(<NotificationSuccess text="Product bought successfully"/>);
                 getProducts();
-                fetchBalance();
+                fetchBalance(address);
             })
             .catch(error => {
                 console.log(error)
@@ -66,10 +66,10 @@ const Products = ({address, fetchBalance}) => {
     const deleteProduct = async (product) => {
         setLoading(true);
         deleteProductAction(address, product.appId)
-            .then(_ => {
+            .then(() => {
                 toast(<NotificationSuccess text="Product deleted successfully"/>);
                 getProducts();
-                fetchBalance();
+                fetchBalance(address);
             })
             .catch(error => {
                 console.log(error)
