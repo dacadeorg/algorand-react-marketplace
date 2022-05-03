@@ -31,3 +31,8 @@ typechain
 # JetBrains IDE
 .idea/
 *.iml
+
+# Python
+venv
+__pycache__
+*.pyc
