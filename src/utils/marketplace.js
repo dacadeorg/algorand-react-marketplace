@@ -14,7 +14,7 @@ import {
 } from "./constants";
 /* eslint import/no-webpack-loader-syntax: off */
 import approvalProgram from "!!raw-loader!../contracts/marketplace_approval.teal";
-import clearStateProgram from "!!raw-loader!../contracts/marketplace_clear_state.teal";
+import clearProgram from "!!raw-loader!../contracts/marketplace_clear.teal";
 import {Product} from "./models";
 import {base64ToUTF8String, utf8ToBase64String} from "./conversions";
 
@@ -37,7 +37,7 @@ export const createProductAction = async (senderAddress, product) => {
 
     // Compile programs
     const compiledApprovalProgram = await compileProgram(approvalProgram)
-    const compiledClearStateProgram = await compileProgram(clearStateProgram)
+    const compiledClearProgram = await compileProgram(clearProgram)
 
     // Build note to identify transaction later and required app args as Uint8Arrays
     let note = new TextEncoder().encode(appNote);
@@ -54,7 +54,7 @@ export const createProductAction = async (senderAddress, product) => {
         suggestedParams: params,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
         approvalProgram: compiledApprovalProgram,
-        clearProgram: compiledClearStateProgram,
+        clearProgram: compiledClearProgram,
         numLocalInts: numLocalInts,
         numLocalByteSlices: numLocalBytes,
         numGlobalInts: numGlobalInts,
