@@ -10,16 +10,9 @@ class Product:
         sold = Bytes("SOLD")
 
     class AppMethods:
-        buy = "buy"
+        buy = Bytes("buy")
 
-    def application_start(self):
-        return Cond(
-            [Txn.application_id() == Int(0), self.app_initialization()],
-            [Txn.on_completion() == OnComplete.DeleteApplication, self.app_deletion()],
-            [Txn.application_args[0] == Bytes(self.AppMethods.buy), self.buy(count=Txn.application_args[1])],
-        )
-
-    def app_initialization(self):
+    def application_creation(self):
         return Seq([
             Assert(Txn.application_args.length() == Int(4)),
             Assert(Txn.note() == Bytes("marketplace-tutorial:uv1")),
@@ -32,7 +25,8 @@ class Product:
             Approve()
         ])
 
-    def buy(self, count):
+    def buy(self):
+        count = Txn.application_args[1]
         valid_number_of_transactions = Global.group_size() == Int(2)
 
         valid_payment_to_seller = And(
@@ -52,8 +46,18 @@ class Product:
 
         return If(can_buy).Then(update_state).Else(Reject())
 
+    def application_deletion(self):
+        return Return(Txn.sender() == Global.creator_address())
+
+    def application_start(self):
+        return Cond(
+            [Txn.application_id() == Int(0), self.application_creation()],
+            [Txn.on_completion() == OnComplete.DeleteApplication, self.application_deletion()],
+            [Txn.application_args[0] == self.AppMethods.buy, self.buy()]
+        )
+
     def approval_program(self):
         return self.application_start()
 
-    def app_deletion(self):
-        return Return(Txn.sender() == Global.creator_address())
+    def clear_program(self):
+        return Return(Int(1))
