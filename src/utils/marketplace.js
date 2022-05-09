@@ -41,7 +41,7 @@ const compileProgram = async (programSource) => {
 export const createProductAction = async (senderAddress, product) => {
     console.log("Adding product...")
 
-    let params = await algodClient.getTransactionParams().do()
+    let params = await algodClient.getTransactionParams().do();
     params.fee = algosdk.ALGORAND_MIN_TX_FEE;
     params.flatFee = true;
 
@@ -80,11 +80,11 @@ export const createProductAction = async (senderAddress, product) => {
     if (ENVIRONMENT === "localSandbox") {
         let signedTxn = txn.signTxn(localAccount.sk);
         console.log("Signed transaction with txID: %s", txId);
-        await algodClient.sendRawTransaction(signedTxn).do()
+        await algodClient.sendRawTransaction(signedTxn).do();
     } else {
         let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
         console.log("Signed transaction with txID: %s", txId);
-        await algodClient.sendRawTransaction(signedTxn.blob).do()
+        await algodClient.sendRawTransaction(signedTxn.blob).do();
     }
 
     // Wait for transaction to be confirmed
@@ -94,7 +94,7 @@ export const createProductAction = async (senderAddress, product) => {
     console.log("Transaction " + txId + " confirmed in round " + confirmedTxn["confirmed-round"]);
 
     // Get created application id and notify about completion
-    let transactionResponse = await algodClient.pendingTransactionInformation(txId).do()
+    let transactionResponse = await algodClient.pendingTransactionInformation(txId).do();
     let appId = transactionResponse['application-index'];
     console.log("Created new app-id: ", appId);
     return appId;
@@ -103,6 +103,7 @@ export const createProductAction = async (senderAddress, product) => {
 // BUY PRODUCT: Group transaction consisting of ApplicationCallTxn and PaymentTxn
 export const buyProductAction = async (senderAddress, product, count) => {
     console.log("Buying product...");
+
     let params = await algodClient.getTransactionParams().do();
     params.fee = algosdk.ALGORAND_MIN_TX_FEE;
     params.flatFee = true;
@@ -126,28 +127,28 @@ export const buyProductAction = async (senderAddress, product, count) => {
         from: senderAddress,
         to: product.owner,
         amount: product.price * count,
-        note: new TextEncoder().encode("buy"),
         suggestedParams: params
     })
 
+    let txnArray = [buyTxn, spendTxn]
+
     // Create group transaction out of previously build transactions
-    algosdk.assignGroupID([buyTxn, spendTxn])
+    let groupID = algosdk.computeGroupID(txnArray)
+    for (let i = 0; i < 2; i++) txnArray[i].group = groupID;
 
     let tx = null;
     // Sign & submit the group transaction
-    if (ENVIRONMENT === "localSandbox") {
+   if (ENVIRONMENT === "localSandbox") {
         let signedBuyTxn = buyTxn.signTxn(localAccount.sk);
         console.log("Signed buy transaction");
         let signedSpendTxn = spendTxn.signTxn(localAccount.sk);
         console.log("Signed spend transaction");
-        tx = await algodClient.sendRawTransaction([signedBuyTxn, signedSpendTxn]).do()
+        tx = await algodClient.sendRawTransaction([signedBuyTxn, signedSpendTxn]).do();
     } else {
-        let signedBuyTxn = await myAlgoConnect.signTransaction(buyTxn.toByte());
-        console.log("Signed buy transaction");
-        let signedSpendTxn = await myAlgoConnect.signTransaction(spendTxn.toByte());
-        console.log("Signed spend transaction");
-        tx = await algodClient.sendRawTransaction([signedBuyTxn.blob, signedSpendTxn.blob]).do()
-    }
+       let signedTxn = await myAlgoConnect.signTransaction(txnArray.map(txn => txn.toByte()));
+       console.log("Signed group transaction");
+       tx = await algodClient.sendRawTransaction(signedTxn.map(txn => txn.blob)).do();
+   }
 
     // Wait for group transaction to be confirmed
     let confirmedTxn = await algosdk.waitForConfirmation(algodClient, tx.txId, 4);
@@ -176,11 +177,11 @@ export const deleteProductAction = async (senderAddress, index) => {
     if (ENVIRONMENT === "localSandbox") {
         let signedTxn = txn.signTxn(localAccount.sk);
         console.log("Signed transaction with txID: %s", txId);
-        await algodClient.sendRawTransaction(signedTxn).do()
+        await algodClient.sendRawTransaction(signedTxn).do();
     } else {
         let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
         console.log("Signed transaction with txID: %s", txId);
-        await algodClient.sendRawTransaction(signedTxn.blob).do()
+        await algodClient.sendRawTransaction(signedTxn.blob).do();
     }
 
     // Wait for transaction to be confirmed
