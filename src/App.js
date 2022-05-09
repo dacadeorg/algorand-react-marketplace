@@ -6,6 +6,7 @@ import {Container, Nav} from "react-bootstrap";
 import Products from "./components/marketplace/Products";
 import {algodClient, ENVIRONMENT, localAccount, myAlgoConnect} from "./utils/constants";
 import {Notification} from "./components/utils/Notifications";
+import coverImg from "./assets/img/sandwich.jpg"
 
 const App = function AppWrapper() {
 
@@ -70,9 +71,7 @@ const App = function AppWrapper() {
                     </main>
                 </Container>
             ) : (
-                <Cover name={"Algorand React Marketplace"}
-                       coverImg={"https://blog.bitnovo.com/wp-content/uploads/2021/07/Que-es-Algorand-ALGO.jpg"}
-                       connect={connectWallet}/>
+                <Cover name={"Street Food"} coverImg={coverImg} connect={connectWallet}/>
             )}
         </>
     );
