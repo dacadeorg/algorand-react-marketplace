@@ -1,6 +1,5 @@
 import Jazzicon from "react-jazzicon";
 import PropTypes from "prop-types";
-import Products from "../marketplace/Products";
 
 const Identicon = ({size, address, ...rest}) => (
     <div {...rest} style={{width: `${size}px`, height: `${size}px`}}>
@@ -8,7 +7,7 @@ const Identicon = ({size, address, ...rest}) => (
     </div>
 );
 
-Products.propTypes = {
+Identicon.propTypes = {
     size: PropTypes.number.isRequired,
     address: PropTypes.string.isRequired
 };
