@@ -1,6 +1,14 @@
 import {ALGORAND_DECIMALS} from "./constants";
 import BigNumber from "bignumber.js";
 
+export const base64ToUTF8String = (base64String) => {
+    return Buffer.from(base64String, 'base64').toString("utf-8")
+}
+
+export const utf8ToBase64String = (utf8String) => {
+    return Buffer.from(utf8String, 'utf8').toString('base64')
+}
+
 // Truncate is done in the middle to allow for checking of first and last chars simply to ensure correct address
 export const truncateAddress = (address) => {
     if (!address) return
@@ -19,12 +27,4 @@ export const stringToMicroAlgos = (str) => {
     if (!str) return
     let bigNumber = new BigNumber(str)
     return bigNumber.shiftedBy(ALGORAND_DECIMALS).toNumber();
-}
-
-export const base64ToUTF8String = (base64String) => {
-    return Buffer.from(base64String, 'base64').toString("utf-8")
-}
-
-export const utf8ToBase64String = (utf8String) => {
-    return Buffer.from(utf8String, 'utf8').toString('base64')
 }
