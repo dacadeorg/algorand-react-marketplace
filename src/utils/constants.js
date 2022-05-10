@@ -46,7 +46,7 @@ export const myAlgoConnect = new MyAlgoConnect();
 export const currentRound = 21231700;
 
 // https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0002.md
-export const appNote = "marketplace-tutorial:uv1"
+export const appNote = "tutorial-marketplace:uv1"
 
 // Maximum local storage allocation, immutable
 export const numLocalInts = 0;
