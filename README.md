@@ -47,7 +47,7 @@
    ```
 3. Run application
    ```sh
-   npm run start
+   npm start
    ```
 4. Open development server on http://localhost:3000
 

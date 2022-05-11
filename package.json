@@ -46,7 +46,6 @@
     ]
   },
   "devDependencies": {
-    "raw-loader": "^4.0.2",
-    "react-error-overlay": "6.0.9"
+    "raw-loader": "^4.0.2"
   }
 }
