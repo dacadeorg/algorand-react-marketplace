@@ -43,10 +43,12 @@ export const indexerClient = new algosdk.Indexer(config.indexerToken, config.ind
 
 export const myAlgoConnect = new MyAlgoConnect();
 
-export const currentRound = 21231700;
+export const minRound = 21540507;
 
 // https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0002.md
-export const appNote = "tutorial-marketplace:uv1"
+export const marketplaceNote = "tutorial-marketplace:uv1"
+// Randomly generated address to find applications using indexer
+export const marketplaceAddress = "ZBPYEPTNDALN272CYRPU7PSFMXP6QZPVCYF32TPTATUKD57CN4UCSMJOYI"
 
 // Maximum local storage allocation, immutable
 export const numLocalInts = 0;

@@ -1,5 +1,8 @@
 from pyteal import *
 
+marketplace_note = Bytes("tutorial-marketplace:uv1")
+marketplace_address = Addr("ZBPYEPTNDALN272CYRPU7PSFMXP6QZPVCYF32TPTATUKD57CN4UCSMJOYI")
+
 
 class Product:
     class Variables:
@@ -13,38 +16,44 @@ class Product:
         buy = Bytes("buy")
 
     def application_creation(self):
+        create_txn = Gtxn[0]
+        pay_txn = Gtxn[1]
         return Seq([
-            Assert(Txn.application_args.length() == Int(4)),
-            Assert(Txn.note() == Bytes("tutorial-marketplace:uv1")),
-            Assert(Btoi(Txn.application_args[3]) > Int(0)),
-            App.globalPut(self.Variables.name, Txn.application_args[0]),
-            App.globalPut(self.Variables.image, Txn.application_args[1]),
-            App.globalPut(self.Variables.description, Txn.application_args[2]),
-            App.globalPut(self.Variables.price, Btoi(Txn.application_args[3])),
+            # Check group
+            Assert(Global.group_size() == Int(2)),
+            Assert(create_txn.sender() == pay_txn.sender()),
+            # Check payment transaction
+            Assert(pay_txn.amount() == Int(0)),
+            Assert(pay_txn.receiver() == marketplace_address),
+            # Check create transaction
+            Assert(create_txn.application_args.length() == Int(4)),
+            Assert(create_txn.note() == marketplace_note),
+            Assert(Btoi(create_txn.application_args[3]) > Int(0)),
+            # Create application
+            App.globalPut(self.Variables.name, create_txn.application_args[0]),
+            App.globalPut(self.Variables.image, create_txn.application_args[1]),
+            App.globalPut(self.Variables.description, create_txn.application_args[2]),
+            App.globalPut(self.Variables.price, Btoi(create_txn.application_args[3])),
             App.globalPut(self.Variables.sold, Int(0)),
             Approve()
         ])
 
     def buy(self):
-        count = Txn.application_args[1]
-        valid_number_of_transactions = Global.group_size() == Int(2)
-
-        valid_payment_to_seller = And(
-            Gtxn[1].type_enum() == TxnType.Payment,
-            Gtxn[1].receiver() == Global.creator_address(),
-            Gtxn[1].amount() == App.globalGet(self.Variables.price) * Btoi(count),
-            Gtxn[1].sender() == Gtxn[0].sender(),
-        )
-
-        can_buy = And(valid_number_of_transactions,
-                      valid_payment_to_seller)
-
-        update_state = Seq([
+        call_txn = Gtxn[0]
+        pay_txn = Gtxn[1]
+        count = call_txn.application_args[1]
+        return Seq([
+            # Check group
+            Assert(Global.group_size() == Int(2)),
+            Assert(pay_txn.sender() == call_txn.sender()),
+            # Check payment transaction
+            Assert(pay_txn.type_enum() == TxnType.Payment),
+            Assert(pay_txn.receiver() == Global.creator_address()),
+            Assert(pay_txn.amount() == App.globalGet(self.Variables.price) * Btoi(count)),
+            # Update state
             App.globalPut(self.Variables.sold, App.globalGet(self.Variables.sold) + Btoi(count)),
             Approve()
         ])
-
-        return If(can_buy).Then(update_state).Else(Reject())
 
     def application_deletion(self):
         return Return(Txn.sender() == Global.creator_address())

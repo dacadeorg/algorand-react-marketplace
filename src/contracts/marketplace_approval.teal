@@ -2,11 +2,11 @@
 txn ApplicationID
 int 0
 ==
-bnz main_l8
+bnz main_l6
 txn OnCompletion
 int DeleteApplication
 ==
-bnz main_l7
+bnz main_l5
 txna ApplicationArgs 0
 byte "buy"
 ==
@@ -16,69 +16,82 @@ main_l4:
 global GroupSize
 int 2
 ==
-gtxn 1 TypeEnum
-int pay
-==
-gtxn 1 Receiver
-global CreatorAddress
-==
-&&
-gtxn 1 Amount
-byte "PRICE"
-app_global_get
-txna ApplicationArgs 1
-btoi
-*
-==
-&&
+assert
 gtxn 1 Sender
 gtxn 0 Sender
 ==
-&&
-&&
-bnz main_l6
-int 0
-return
-main_l6:
+assert
+gtxn 1 TypeEnum
+int pay
+==
+assert
+gtxn 1 Receiver
+global CreatorAddress
+==
+assert
+gtxn 1 Amount
+byte "PRICE"
+app_global_get
+gtxna 0 ApplicationArgs 1
+btoi
+*
+==
+assert
 byte "SOLD"
 byte "SOLD"
 app_global_get
-txna ApplicationArgs 1
+gtxna 0 ApplicationArgs 1
 btoi
 +
 app_global_put
 int 1
 return
-main_l7:
+main_l5:
 txn Sender
 global CreatorAddress
 ==
 return
-main_l8:
-txn NumAppArgs
+main_l6:
+global GroupSize
+int 2
+==
+assert
+gtxn 0 Sender
+gtxn 1 Sender
+==
+assert
+gtxn 1 Amount
+int 0
+==
+assert
+gtxn 1 Receiver
+addr ZBPYEPTNDALN272CYRPU7PSFMXP6QZPVCYF32TPTATUKD57CN4UCSMJOYI
+==
+assert
+gtxn 0 NumAppArgs
 int 4
 ==
 assert
-txn Note
+gtxn 0 Note
 byte "tutorial-marketplace:uv1"
 ==
 assert
-txna ApplicationArgs 3
+gtxna 0 ApplicationArgs 3
 btoi
 int 0
 >
 assert
 byte "NAME"
-txna ApplicationArgs 0
+gtxna 0 ApplicationArgs 0
 app_global_put
 byte "IMAGE"
-txna ApplicationArgs 1
+gtxna 0 ApplicationArgs 1
 app_global_put
 byte "DESCRIPTION"
-txna ApplicationArgs 2
+gtxna 0 ApplicationArgs 2
 app_global_put
 byte "PRICE"
-txna ApplicationArgs 3
+gtxna 0 ApplicationArgs 3
 btoi
 app_global_put
 byte "SOLD"
