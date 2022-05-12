@@ -1,38 +1,14 @@
 import algosdk from "algosdk";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 
-// See README.md on how to create and start a local sandbox environment
-//export const ENVIRONMENT = "localSandbox"
-export const ENVIRONMENT = "testnet"
-
-// local (release) account
-// 1. Get mnemonics from existing accounts with ./sandbox goal account export --address [account_address]
-// 2. Update .env.development with local account mnemonic
-export const localAccount = algosdk.mnemonicToSecretKey(process.env.REACT_APP_LOCAL_ACCOUNT_MNEMONIC)
-
-const apiEnvironment = {
-    // Local private network
-    // https://developer.algorand.org/docs/sdks/javascript/#connect-your-client
-    localSandbox: {
-        algodToken: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        algodServer: "http://localhost",
-        algodPort: 4001,
-        indexerToken: "",
-        indexerServer: "http://localhost",
-        indexerPort: 8980,
-    },
-    // Testnet
-    testnet: {
-        algodToken: "",
-        algodServer: "https://node.testnet.algoexplorerapi.io",
-        algodPort: "",
-        indexerToken: "",
-        indexerServer: "https://algoindexer.testnet.algoexplorerapi.io",
-        indexerPort: "",
-    }
+const config = {
+    algodToken: "",
+    algodServer: "https://node.testnet.algoexplorerapi.io",
+    algodPort: "",
+    indexerToken: "",
+    indexerServer: "https://algoindexer.testnet.algoexplorerapi.io",
+    indexerPort: "",
 }
-
-const config = apiEnvironment[ENVIRONMENT]
 
 export const algodClient = new algosdk.Algodv2(config.algodToken, config.algodServer, config.algodPort)
 

@@ -1,9 +1,7 @@
 import algosdk from "algosdk";
 import {
     algodClient,
-    ENVIRONMENT,
     indexerClient,
-    localAccount,
     marketplaceNote,
     minRound,
     myAlgoConnect,
@@ -77,15 +75,9 @@ export const createProductAction = async (senderAddress, product) => {
     let txId = txn.txID().toString();
 
     // Sign & submit the transaction
-    if (ENVIRONMENT === "localSandbox") {
-        let signedTxn = txn.signTxn(localAccount.sk);
-        console.log("Signed transaction with txID: %s", txId);
-        await algodClient.sendRawTransaction(signedTxn).do();
-    } else {
-        let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
-        console.log("Signed transaction with txID: %s", txId);
-        await algodClient.sendRawTransaction(signedTxn.blob).do();
-    }
+    let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
+    console.log("Signed transaction with txID: %s", txId);
+    await algodClient.sendRawTransaction(signedTxn.blob).do();
 
     // Wait for transaction to be confirmed
     let confirmedTxn = await algosdk.waitForConfirmation(algodClient, txId, 4);
@@ -136,19 +128,10 @@ export const buyProductAction = async (senderAddress, product, count) => {
     let groupID = algosdk.computeGroupID(txnArray)
     for (let i = 0; i < 2; i++) txnArray[i].group = groupID;
 
-    let tx = null;
     // Sign & submit the group transaction
-   if (ENVIRONMENT === "localSandbox") {
-        let signedAppCallTxn = appCallTxn.signTxn(localAccount.sk);
-        console.log("Signed buy transaction");
-        let signedPaymentTxn = paymentTxn.signTxn(localAccount.sk);
-        console.log("Signed spend transaction");
-        tx = await algodClient.sendRawTransaction([signedAppCallTxn, signedPaymentTxn]).do();
-    } else {
-       let signedTxn = await myAlgoConnect.signTransaction(txnArray.map(txn => txn.toByte()));
-       console.log("Signed group transaction");
-       tx = await algodClient.sendRawTransaction(signedTxn.map(txn => txn.blob)).do();
-   }
+    let signedTxn = await myAlgoConnect.signTransaction(txnArray.map(txn => txn.toByte()));
+    console.log("Signed group transaction");
+    let tx = await algodClient.sendRawTransaction(signedTxn.map(txn => txn.blob)).do();
 
     // Wait for group transaction to be confirmed
     let confirmedTxn = await algosdk.waitForConfirmation(algodClient, tx.txId, 4);
@@ -174,15 +157,9 @@ export const deleteProductAction = async (senderAddress, index) => {
     let txId = txn.txID().toString();
 
     // Sign & submit the transaction
-    if (ENVIRONMENT === "localSandbox") {
-        let signedTxn = txn.signTxn(localAccount.sk);
-        console.log("Signed transaction with txID: %s", txId);
-        await algodClient.sendRawTransaction(signedTxn).do();
-    } else {
-        let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
-        console.log("Signed transaction with txID: %s", txId);
-        await algodClient.sendRawTransaction(signedTxn.blob).do();
-    }
+    let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
+    console.log("Signed transaction with txID: %s", txId);
+    await algodClient.sendRawTransaction(signedTxn.blob).do();
 
     // Wait for transaction to be confirmed
     const confirmedTxn = await algosdk.waitForConfirmation(algodClient, txId, 4);
@@ -206,7 +183,7 @@ export const getProductsAction = async () => {
     let transactionInfo = await indexerClient.searchForTransactions()
         .notePrefix(encodedNote)
         .txType("appl")
-        .minRound(ENVIRONMENT === "localSandbox" ? 0 : minRound)
+        .minRound(minRound)
         .do();
     let products = []
     for (const transaction of transactionInfo.transactions) {
