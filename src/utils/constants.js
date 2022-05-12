@@ -21,13 +21,10 @@ const apiEnvironment = {
         indexerServer: "http://localhost",
         indexerPort: 8980,
     },
-    // Testnet using purestake API
-    // An API key can be obtained after registering on https://developer.purestake.io/signup
+    // Testnet
     testnet: {
-        algodToken: {
-            "X-API-Key": "nUNvDv87ov6WwXYAXCtouVXQ568FJoG7MeRpSKD7",
-        },
-        algodServer: "https://testnet-algorand.api.purestake.io/ps2",
+        algodToken: "",
+        algodServer: "https://node.testnet.algoexplorerapi.io",
         algodPort: "",
         indexerToken: "",
         indexerServer: "https://algoindexer.testnet.algoexplorerapi.io",

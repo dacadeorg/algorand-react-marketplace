@@ -4,7 +4,7 @@ import './App.css';
 import Wallet from "./components/Wallet";
 import {Container, Nav} from "react-bootstrap";
 import Products from "./components/marketplace/Products";
-import {algodClient, ENVIRONMENT, localAccount, myAlgoConnect} from "./utils/constants";
+import {algodClient, ENVIRONMENT, indexerClient, localAccount, myAlgoConnect} from "./utils/constants";
 import {Notification} from "./components/utils/Notifications";
 import coverImg from "./assets/img/sandwich.jpg"
 
@@ -15,9 +15,9 @@ const App = function AppWrapper() {
     const [balance, setBalance] = useState(0);
 
     const fetchBalance = async (accountAddress) => {
-        algodClient.accountInformation(accountAddress).do()
-            .then(accountInfo => {
-                const _balance = accountInfo.amount;
+        indexerClient.lookupAccountByID(accountAddress).do()
+            .then(response => {
+                const _balance = response.account.amount;
                 setBalance(_balance);
             })
             .catch(error => {
