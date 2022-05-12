@@ -1,8 +1,8 @@
 import algosdk from "algosdk";
 import {
     algodClient,
-    appNote,
-    currentRound,
+    marketplaceNote,
+    minRound,
     ENVIRONMENT,
     indexerClient,
     localAccount,
@@ -50,7 +50,7 @@ export const createProductAction = async (senderAddress, product) => {
     const compiledClearProgram = await compileProgram(clearProgram)
 
     // Build note to identify transaction later and required app args as Uint8Arrays
-    let note = new TextEncoder().encode(appNote);
+    let note = new TextEncoder().encode(marketplaceNote);
     let name = new TextEncoder().encode(product.name);
     let image = new TextEncoder().encode(product.image);
     let description = new TextEncoder().encode(product.description);
@@ -114,7 +114,7 @@ export const buyProductAction = async (senderAddress, product, count) => {
     let appArgs = [buyArg, countArg]
 
     // Create ApplicationCallTxn
-    let buyTxn = algosdk.makeApplicationCallTxnFromObject({
+    let appCallTxn = algosdk.makeApplicationCallTxnFromObject({
         from: senderAddress,
         appIndex: product.appId,
         onComplete: algosdk.OnApplicationComplete.NoOpOC,
@@ -123,14 +123,14 @@ export const buyProductAction = async (senderAddress, product, count) => {
     })
 
     // Create PaymentTxn
-    let spendTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+    let paymentTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
         from: senderAddress,
         to: product.owner,
         amount: product.price * count,
         suggestedParams: params
     })
 
-    let txnArray = [buyTxn, spendTxn]
+    let txnArray = [appCallTxn, paymentTxn]
 
     // Create group transaction out of previously build transactions
     let groupID = algosdk.computeGroupID(txnArray)
@@ -139,11 +139,11 @@ export const buyProductAction = async (senderAddress, product, count) => {
     let tx = null;
     // Sign & submit the group transaction
    if (ENVIRONMENT === "localSandbox") {
-        let signedBuyTxn = buyTxn.signTxn(localAccount.sk);
+        let signedAppCallTxn = appCallTxn.signTxn(localAccount.sk);
         console.log("Signed buy transaction");
-        let signedSpendTxn = spendTxn.signTxn(localAccount.sk);
+        let signedPaymentTxn = paymentTxn.signTxn(localAccount.sk);
         console.log("Signed spend transaction");
-        tx = await algodClient.sendRawTransaction([signedBuyTxn, signedSpendTxn]).do();
+        tx = await algodClient.sendRawTransaction([signedAppCallTxn, signedPaymentTxn]).do();
     } else {
        let signedTxn = await myAlgoConnect.signTransaction(txnArray.map(txn => txn.toByte()));
        console.log("Signed group transaction");
@@ -199,13 +199,14 @@ export const deleteProductAction = async (senderAddress, index) => {
 // GET PRODUCTS: Use indexer
 export const getProductsAction = async () => {
     console.log("Fetching products...")
-    let note = new TextEncoder().encode(appNote);
-    let s = Buffer.from(note).toString("base64");
+    let note = new TextEncoder().encode(marketplaceNote);
+    let encodedNote = Buffer.from(note).toString("base64");
 
     // Step 1: Get all transactions by notePrefix (+ minRound filter for performance)
     let transactionInfo = await indexerClient.searchForTransactions()
-        .notePrefix(s)
-        .minRound(ENVIRONMENT === "localSandbox" ? 0 : currentRound)
+        .notePrefix(encodedNote)
+        .txType("appl")
+        .minRound(ENVIRONMENT === "localSandbox" ? 0 : minRound)
         .do();
     let products = []
     for (const transaction of transactionInfo.transactions) {
@@ -225,7 +226,10 @@ export const getProductsAction = async () => {
 const getApplication = async (appId) => {
     try {
         // 1. Get application by appId
-        let response = await indexerClient.lookupApplications(appId).do();
+        let response = await indexerClient.lookupApplications(appId).includeAll(true).do();
+        if (response.application.deleted) {
+            return null;
+        }
         let globalState = response.application.params["global-state"]
 
         // 2. Parse fields of response and return product
