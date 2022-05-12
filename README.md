@@ -56,20 +56,9 @@
 
 ![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/cloudy.png)
 
-## :computer: Development: Connect wallet
-### Local network using Algorand Sandbox
-- Clone [Algorand Sandbox repository](https://github.com/algorand/sandbox) 
-- Start Algorand Sandbox `./sandbox up release -v`
-- Export local account mnemonic phrase with `./sandbox goal account export --address [account_address]`
-- Insert mnemonic phrase in `.env.development` as `REACT_APP_LOCAL_ACCOUNT_MNEMONIC`
-  - :warning: Make sure to run `npm run start` again after changing .env file to load changes
-- Make sure `ENVIRONMENT` is set to `"localSandbox"` (`src/utils/constants.js`, line 5)
-- Start app and click "Connect Wallet"
-
-### Testnet
+## :computer: Development: Connect to testnet wallet
 - Create account on testnet using [MyAlgo Wallet](https://wallet.myalgo.com/)
 - Add funds using [faucet](https://bank.testnet.algorand.network/)
-- Make sure `ENVIRONMENT` is set to `"testnet"` (`src/utils/constants.js`, line 6)
 - Start app, click "Connect Wallet" and use MyAlgo Wallet UI to connect testnet wallet
 
 
