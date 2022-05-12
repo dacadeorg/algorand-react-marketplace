@@ -4,7 +4,7 @@ import './App.css';
 import Wallet from "./components/Wallet";
 import {Container, Nav} from "react-bootstrap";
 import Products from "./components/marketplace/Products";
-import {algodClient, ENVIRONMENT, indexerClient, localAccount, myAlgoConnect} from "./utils/constants";
+import {ENVIRONMENT, indexerClient, localAccount, myAlgoConnect} from "./utils/constants";
 import {Notification} from "./components/utils/Notifications";
 import coverImg from "./assets/img/sandwich.jpg"
 
