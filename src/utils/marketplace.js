@@ -1,11 +1,11 @@
 import algosdk from "algosdk";
 import {
     algodClient,
-    marketplaceNote,
-    minRound,
     ENVIRONMENT,
     indexerClient,
     localAccount,
+    marketplaceNote,
+    minRound,
     myAlgoConnect,
     numGlobalBytes,
     numGlobalInts,
