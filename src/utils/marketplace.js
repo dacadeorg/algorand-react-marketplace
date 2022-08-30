@@ -40,8 +40,6 @@ export const createProductAction = async (senderAddress, product) => {
     console.log("Adding product...")
 
     let params = await algodClient.getTransactionParams().do();
-    params.fee = algosdk.ALGORAND_MIN_TX_FEE;
-    params.flatFee = true;
 
     // Compile programs
     const compiledApprovalProgram = await compileProgram(approvalProgram)
@@ -97,8 +95,6 @@ export const buyProductAction = async (senderAddress, product, count) => {
     console.log("Buying product...");
 
     let params = await algodClient.getTransactionParams().do();
-    params.fee = algosdk.ALGORAND_MIN_TX_FEE;
-    params.flatFee = true;
 
     // Build required app args as Uint8Array
     let buyArg = new TextEncoder().encode("buy")
@@ -145,8 +141,6 @@ export const deleteProductAction = async (senderAddress, index) => {
     console.log("Deleting application...");
 
     let params = await algodClient.getTransactionParams().do();
-    params.fee = algosdk.ALGORAND_MIN_TX_FEE;
-    params.flatFee = true;
 
     // Create ApplicationDeleteTxn
     let txn = algosdk.makeApplicationDeleteTxnFromObject({
