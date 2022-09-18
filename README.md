@@ -20,7 +20,11 @@
 
 [//]: # (  </a>)
 
-<h3 align="center">Algorand React Marketplace</h3>
+<h3 align="center">Algorand React Housing Property Dapp</h3>
+
+<p align="justify">This Dapp allow user to list their house property for sale and another user can buy it and also rate the property for reference incase another user wants to buy another property from same seller with the rating system users will be able to have more trust in seller.</p>
+
+[Demo](https://mujhtech.github.io/algorand-dapp)
 
 </div>
 
