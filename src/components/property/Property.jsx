@@ -76,7 +76,7 @@ const Property = ({
                 <i className="bi bi-trash"></i>
               </Button>
             )}
-            {property.buyer === address && bought === 1 && (
+            {bought === 1 && (
               <>
                 <FloatingLabel
                   controlId="inputCount"
@@ -88,7 +88,7 @@ const Property = ({
                     value={rate}
                     min="1"
                     max="10"
-                    readOnly={property.rate > 0}
+                    readOnly={property.rate > 0 || property.buyer !== address}
                     onChange={(e) => {
                       setRate(Number(e.target.value));
                     }}
@@ -97,7 +97,7 @@ const Property = ({
                 <Button
                   variant="outline-secondary"
                   onClick={() => rateProperty(property, rate)}
-                  disabled={property.rate > 0}
+                  disabled={property.rate > 0 || property.buyer !== address}
                 >
                   <i className={ratedIcon()}></i>
                 </Button>
