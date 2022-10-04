@@ -10,42 +10,25 @@ bnz main_l7
 txna ApplicationArgs 0
 byte "buy"
 ==
-bnz main_l4
+bnz main_l6
+txna ApplicationArgs 0
+byte "rate"
+==
+bnz main_l5
 err
-main_l4:
-global GroupSize
-int 2
-==
-gtxn 1 TypeEnum
-int pay
-==
-gtxn 1 Receiver
-global CreatorAddress
-==
-&&
-gtxn 1 Amount
-byte "PRICE"
-app_global_get
+main_l5:
+byte "RATE"
 txna ApplicationArgs 1
 btoi
-*
-==
-&&
-gtxn 1 Sender
-gtxn 0 Sender
-==
-&&
-&&
-bnz main_l6
-int 0
+app_global_put
+int 1
 return
 main_l6:
-byte "SOLD"
-byte "SOLD"
-app_global_get
+byte "BOUGHT"
+int 1
+app_global_put
+byte "BUYER"
 txna ApplicationArgs 1
-btoi
-+
 app_global_put
 int 1
 return
@@ -56,33 +39,37 @@ global CreatorAddress
 return
 main_l8:
 txn NumAppArgs
-int 4
+int 5
 ==
 assert
 txn Note
-byte "tutorial-marketplace:uv1"
+byte "property-dapp:uv2"
 ==
 assert
-txna ApplicationArgs 3
-btoi
-int 0
->
-assert
-byte "NAME"
+byte "TITLE"
 txna ApplicationArgs 0
 app_global_put
 byte "IMAGE"
 txna ApplicationArgs 1
 app_global_put
-byte "DESCRIPTION"
+byte "LOCATION"
 txna ApplicationArgs 2
 app_global_put
-byte "PRICE"
-txna ApplicationArgs 3
-btoi
-app_global_put
-byte "SOLD"
+byte "BOUGHT"
 int 0
+app_global_put
+byte "RATE"
+int 0
+app_global_put
+byte "OWNER"
+txna ApplicationArgs 3
+app_global_put
+byte "BUYER"
+txna ApplicationArgs 3
+app_global_put
+byte "PRICE"
+txna ApplicationArgs 4
+btoi
 app_global_put
 int 1
 return
