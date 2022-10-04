@@ -49,7 +49,7 @@ const compileProgram = async (programSource) => {
 
 // CREATE PRODUCT: ApplicationCreateTxn
 export const createPropertyAction = async (senderAddress, property) => {
-  console.log("Adding property...");
+  
 
   let params = await algodClient.getTransactionParams().do();
 
@@ -87,32 +87,27 @@ export const createPropertyAction = async (senderAddress, property) => {
 
   // Sign & submit the transaction
   let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
-  console.log("Signed transaction with txID: %s", txId);
+  
   await algodClient.sendRawTransaction(signedTxn.blob).do();
 
   // Wait for transaction to be confirmed
   let confirmedTxn = await algosdk.waitForConfirmation(algodClient, txId, 4);
 
   // Get the completed Transaction
-  console.log(
-    "Transaction " +
-      txId +
-      " confirmed in round " +
-      confirmedTxn["confirmed-round"]
-  );
+  
 
   // Get created application id and notify about completion
   let transactionResponse = await algodClient
     .pendingTransactionInformation(txId)
     .do();
   let appId = transactionResponse["application-index"];
-  console.log("Created new app-id: ", appId);
+  
   return appId;
 };
 
 // BUY PRODUCT: Group transaction consisting of ApplicationCallTxn and PaymentTxn
 export const buyPropertyAction = async (senderAddress, product) => {
-  console.log("Buying property...");
+  
 
   let params = await algodClient.getTransactionParams().do();
 
@@ -148,7 +143,7 @@ export const buyPropertyAction = async (senderAddress, product) => {
   let signedTxn = await myAlgoConnect.signTransaction(
     txnArray.map((txn) => txn.toByte())
   );
-  console.log("Signed group transaction");
+  
   let tx = await algodClient
     .sendRawTransaction(signedTxn.map((txn) => txn.blob))
     .do();
@@ -157,17 +152,12 @@ export const buyPropertyAction = async (senderAddress, product) => {
   let confirmedTxn = await algosdk.waitForConfirmation(algodClient, tx.txId, 4);
 
   // Notify about completion
-  console.log(
-    "Group transaction " +
-      tx.txId +
-      " confirmed in round " +
-      confirmedTxn["confirmed-round"]
-  );
+  
 };
 
 // RATE PRODUCT: Group transaction consisting of ApplicationCallTxn and PaymentTxn
 export const ratePropertyAction = async (senderAddress, product, rate) => {
-  console.log("Rate property...");
+  
 
   let params = await algodClient.getTransactionParams().do();
 
@@ -196,7 +186,7 @@ export const ratePropertyAction = async (senderAddress, product, rate) => {
   let signedTxn = await myAlgoConnect.signTransaction(
     txnArray.map((txn) => txn.toByte())
   );
-  console.log("Signed group transaction");
+  
   let tx = await algodClient
     .sendRawTransaction(signedTxn.map((txn) => txn.blob))
     .do();
@@ -205,17 +195,12 @@ export const ratePropertyAction = async (senderAddress, product, rate) => {
   let confirmedTxn = await algosdk.waitForConfirmation(algodClient, tx.txId, 4);
 
   // Notify about completion
-  console.log(
-    "Group transaction " +
-      tx.txId +
-      " confirmed in round " +
-      confirmedTxn["confirmed-round"]
-  );
+  
 };
 
 // DELETE PRODUCT: ApplicationDeleteTxn
 export const deletePropertyAction = async (senderAddress, index) => {
-  console.log("Deleting application...");
+  
 
   let params = await algodClient.getTransactionParams().do();
 
@@ -231,31 +216,26 @@ export const deletePropertyAction = async (senderAddress, index) => {
 
   // Sign & submit the transaction
   let signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
-  console.log("Signed transaction with txID: %s", txId);
+  
   await algodClient.sendRawTransaction(signedTxn.blob).do();
 
   // Wait for transaction to be confirmed
   const confirmedTxn = await algosdk.waitForConfirmation(algodClient, txId, 4);
 
   // Get the completed Transaction
-  console.log(
-    "Transaction " +
-      txId +
-      " confirmed in round " +
-      confirmedTxn["confirmed-round"]
-  );
+  
 
   // Get application id of deleted application and notify about completion
   let transactionResponse = await algodClient
     .pendingTransactionInformation(txId)
     .do();
   let appId = transactionResponse["txn"]["txn"].apid;
-  console.log("Deleted app-id: ", appId);
+  
 };
 
 // GET PROPERTIES: Use indexer
 export const getPropertiesAction = async () => {
-  console.log("Fetching properties...");
+  
   let note = new TextEncoder().encode(propertyDappNote);
   let encodedNote = Buffer.from(note).toString("base64");
 
@@ -277,7 +257,7 @@ export const getPropertiesAction = async () => {
       }
     }
   }
-  console.log("Properties fetched.");
+  
   return properties;
 };
 
