@@ -1,9 +1,10 @@
-import Jazzicon from "react-jazzicon";
+import Identicon from 'react-identicons';
+
 import PropTypes from "prop-types";
 
-const Identicon = ({size, address, ...rest}) => (
+const AddressIdenticon = ({size, address, ...rest}) => (
     <div {...rest} style={{width: `${size}px`, height: `${size}px`}}>
-        <Jazzicon diameter={size} seed={parseInt(address.slice(2, 10), 16)}/>
+         <Identicon string={address} size={30}  />
     </div>
 );
 
@@ -12,4 +13,4 @@ Identicon.propTypes = {
     address: PropTypes.string.isRequired
 };
 
-export default Identicon;
+export default AddressIdenticon;

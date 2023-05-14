@@ -1,5 +1,6 @@
 import {ALGORAND_DECIMALS} from "./constants";
 import BigNumber from "bignumber.js";
+global.Buffer = global.Buffer || require('buffer').Buffer
 
 export const base64ToUTF8String = (base64String) => {
     return Buffer.from(base64String, 'base64').toString("utf-8")

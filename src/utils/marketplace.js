@@ -1,3 +1,4 @@
+
 import algosdk from "algosdk";
 import {
     algodClient,
@@ -14,6 +15,7 @@ import {
 import approvalProgram from "!!raw-loader!../contracts/marketplace_approval.teal";
 import clearProgram from "!!raw-loader!../contracts/marketplace_clear.teal";
 import {base64ToUTF8String, utf8ToBase64String} from "./conversions";
+global.Buffer = global.Buffer || require('buffer').Buffer
 
 class Product {
     constructor(name, image, description, price, sold, appId, owner) {
@@ -38,6 +40,10 @@ const compileProgram = async (programSource) => {
 // CREATE PRODUCT: ApplicationCreateTxn
 export const createProductAction = async (senderAddress, product) => {
     console.log("Adding product...")
+
+    if(product.image.length > 30) {
+        throw new Error("Image text is too long. Try a shorter url")
+    }
 
     let params = await algodClient.getTransactionParams().do();
 
