@@ -13,19 +13,19 @@ const Products = ({address, fetchBalance}) => {
     const [loading, setLoading] = useState(false);
 
     const getProducts = async () => {
-        setLoading(true);
-        getProductsAction()
-            .then(products => {
-                if (products) {
-                    setProducts(products);
-                }
-            })
-            .catch(error => {
-                console.log(error);
-            })
-            .finally(_ => {
-                setLoading(false);
-            });
+        try {
+            setLoading(true);
+            const products = await getProductsAction()
+            if (!products) {
+                return
+            }
+
+            setProducts(products);
+        } catch (e) {
+            console.log({e})
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -33,48 +33,48 @@ const Products = ({address, fetchBalance}) => {
     }, []);
 
     const createProduct = async (data) => {
-        setLoading(true);
-        createProductAction(address, data)
-            .then(() => {
-                toast(<NotificationSuccess text="Product added successfully."/>);
-                getProducts();
-                fetchBalance(address);
-            })
-            .catch(error => {
-                console.log(error);
-                toast(<NotificationError text="Failed to create a product."/>);
-                setLoading(false);
-            })
+        try {
+            setLoading(true);
+            await createProductAction(address, data);
+            toast(<NotificationSuccess text="Product added successfully."/>);
+            await getProducts();
+            await fetchBalance(address);
+        } catch (error) {
+            console.log(error);
+            toast(<NotificationError text={error?.message || "Failed to create a product."}/>);
+        }finally {
+            setLoading(false);
+        }
     };
 
     const buyProduct = async (product, count) => {
-        setLoading(true);
-        buyProductAction(address, product, count)
-            .then(() => {
-                toast(<NotificationSuccess text="Product bought successfully"/>);
-                getProducts();
-                fetchBalance(address);
-            })
-            .catch(error => {
-                console.log(error)
-                toast(<NotificationError text="Failed to purchase product."/>);
-                setLoading(false);
-            })
+        try {
+            setLoading(true);
+            await buyProductAction(address, product, count);
+            toast(<NotificationSuccess text="Product bought successfully"/>);
+            getProducts();
+            fetchBalance(address);
+        } catch (error) {
+            console.log(error)
+            toast(<NotificationError text="Failed to purchase product."/>);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const deleteProduct = async (product) => {
-        setLoading(true);
-        deleteProductAction(address, product.appId)
-            .then(() => {
-                toast(<NotificationSuccess text="Product deleted successfully"/>);
-                getProducts();
-                fetchBalance(address);
-            })
-            .catch(error => {
-                console.log(error)
-                toast(<NotificationError text="Failed to delete product."/>);
-                setLoading(false);
-            })
+        try {
+            setLoading(true);
+            await deleteProductAction(address, product.appId);
+            toast(<NotificationSuccess text="Product deleted successfully"/>);
+            getProducts();
+            fetchBalance(address);
+        } catch (error) {
+            console.log(error)
+            toast(<NotificationError text="Failed to delete product."/>);
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (loading) {
