@@ -176,6 +176,11 @@ export const deleteProductAction = async (senderAddress, index) => {
 // GET PRODUCTS: Use indexer
 export const getProductsAction = async () => {
     console.log("Fetching products...")
+
+
+    // Get latest round for minRound filter
+    const latestRound = await getStatus()
+
     let note = new TextEncoder().encode(marketplaceNote);
     let encodedNote = Buffer.from(note).toString("base64");
 
@@ -183,7 +188,7 @@ export const getProductsAction = async () => {
     let transactionInfo = await indexerClient.searchForTransactions()
         .notePrefix(encodedNote)
         .txType("appl")
-        .minRound(minRound)
+        .minRound(latestRound)
         .do();
     let products = []
     for (const transaction of transactionInfo.transactions) {
@@ -199,6 +204,23 @@ export const getProductsAction = async () => {
     console.log("Products fetched.")
     return products
 }
+
+const getStatus = async () => {
+    try {
+        const status = await algodClient.status().do();
+        const latestRound = status['last-round'];
+
+        if(!latestRound) {
+            return minRound
+        }
+
+        return Number(latestRound) - 1000 || minRound
+    } catch (error) {
+        console.error('Error getting status:', error);
+        throw error;
+    }
+};
+
 
 const getApplication = async (appId) => {
     try {
